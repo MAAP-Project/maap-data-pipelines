@@ -1,4 +1,4 @@
-# veda-data-pipelines
+# maap-data-pipelines
 
 This repo houses function code and deployment code for producing cloud-optimized
 data products and STAC metadata for interfaces such as https://github.com/NASA-IMPACT/delta-ui.
@@ -36,7 +36,7 @@ This project uses AWS CDK to deploy AWS resources to the cloud.
 ```bash
 ENV="<dev/staging/prod>"
 COGNITO_APP_SECRET="<secret-name-for-pgstac-access>"
-APP_NAME="veda-data-pipelines"
+APP_NAME="maap-data-pipelines"
 STAC_INGESTOR_API_URL="<url-for-ingestor-api>"
 DATA_MANAGEMENT_ROLE_ARN="<arn-for-external-role-permissions>"
 ```

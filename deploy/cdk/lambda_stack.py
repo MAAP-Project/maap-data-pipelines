@@ -199,7 +199,7 @@ class LambdaStack(core.Stack):
         )
 
     def give_permissions(self):
-        internal_bucket = self._bucket(config.VEDA_DATA_BUCKET)
+        internal_bucket = self._bucket(config.MAAP_DATA_BUCKET)
         internal_bucket.grant_read_write(self.cogify_lambda.role)
 
         mcp_bucket = self._bucket(
@@ -207,7 +207,7 @@ class LambdaStack(core.Stack):
         )
 
         external_buckets = [
-            self._bucket(bucket) for bucket in config.VEDA_EXTERNAL_BUCKETS
+            self._bucket(bucket) for bucket in config.MAAP_EXTERNAL_BUCKETS
         ]
 
         for bucket in [internal_bucket, mcp_bucket, *external_buckets]:

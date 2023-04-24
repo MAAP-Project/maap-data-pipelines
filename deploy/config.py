@@ -9,9 +9,9 @@ STAC_INGESTOR_API_URL = os.environ["STAC_INGESTOR_API_URL"]
 EARTHDATA_USERNAME = os.environ.get("EARTHDATA_USERNAME", "XXXX")
 EARTHDATA_PASSWORD = os.environ.get("EARTHDATA_PASSWORD", "XXXX")
 
-APP_NAME = "veda-data-pipelines"
-VEDA_DATA_BUCKET = "veda-data-store"
-VEDA_EXTERNAL_BUCKETS = []
+APP_NAME = "maap-data-pipelines"
+MAAP_DATA_BUCKET = "maap-data-store"
+MAAP_EXTERNAL_BUCKETS = []
 MCP_BUCKETS = {
     "prod": "nasa-maap-data-store",
     "stage": "nasa-maap-data-store",

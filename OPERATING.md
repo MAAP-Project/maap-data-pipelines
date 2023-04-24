@@ -1,6 +1,6 @@
-# Operating Guide: Data Transformation and Ingest for VEDA
+# Operating Guide: Data Transformation and Ingest for MAAP
 
-This guide provides information on how VEDA runs data ingest, transformation and metadata (STAC) publication workflows via AWS Services, such as step functions.
+This guide provides information on how MAAP runs data ingest, transformation and metadata (STAC) publication workflows via AWS Services, such as step functions.
 
 NOTE: Since collection ingest still requires calling the database from a local machine, users must add their IP to an inbound rule on the security group attached to the RDS instance.
 
@@ -8,7 +8,7 @@ NOTE: Since collection ingest still requires calling the database from a local m
 
 ### `collections/`
 
-The `collections/` directory holds json files representing the data for VEDA collection metadata (STAC).
+The `collections/` directory holds json files representing the data for MAAP collection metadata (STAC).
 
 Should follow the following format:
 
@@ -147,7 +147,7 @@ Converts the input file to a COG file, writes it to S3, and returns the S3 key.
 
 #### 4. data-transfer
 
-Copies the data to the VEDA MCP bucket if necessary.
+Copies the data to the MAAP MCP bucket if necessary.
 
 #### 5. build-stac
 

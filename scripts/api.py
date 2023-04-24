@@ -27,7 +27,7 @@ class IngestionApi:
     token: str
 
     @classmethod
-    def from_veda_auth_secret(cls, *, secret_id: str, base_url: str) -> "IngestionApi":
+    def from_maap_auth_secret(cls, *, secret_id: str, base_url: str) -> "IngestionApi":
         cognito_details = cls._get_cognito_service_details(secret_id)
         credentials = cls._get_app_credentials(**cognito_details)
         return cls(token=credentials["access_token"], base_url=base_url)

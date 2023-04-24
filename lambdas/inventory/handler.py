@@ -31,7 +31,7 @@ def handler(event, context):
     # Read the file and queue each item
     kwargs = {}
     if role_arn := os.environ.get("DATA_MANAGEMENT_ROLE_ARN"):
-        creds = assume_role(role_arn, "veda-data-pipelines_s3-discovery")
+        creds = assume_role(role_arn, "maap-data-pipelines_s3-discovery")
         kwargs = {
             "aws_access_key_id": creds["AccessKeyId"],
             "aws_secret_access_key": creds["SecretAccessKey"],
