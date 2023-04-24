@@ -18,8 +18,6 @@ MCP_BUCKETS = {
     "dev": "nasa-maap-data-store",
 }
 USER_SHARED_BUCKET = "maap-user-shared-data"
-STAC_API_ENDPOINT = "https://az2kiic44c.execute-api.us-west-2.amazonaws.com/dev/stac"
-STAC_PROVIDER = "NASA_MAAP"
 
 # This should throw if it is not provided
 DATA_MANAGEMENT_ROLE_ARN = os.environ.get("DATA_MANAGEMENT_ROLE_ARN")
