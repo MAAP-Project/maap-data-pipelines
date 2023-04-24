@@ -2,8 +2,6 @@
 
 This guide provides information on how MAAP runs data ingest, transformation and metadata (STAC) publication workflows via AWS Services, such as step functions.
 
-NOTE: Since collection ingest still requires calling the database from a local machine, users must add their IP to an inbound rule on the security group attached to the RDS instance.
-
 ## Data
 
 ### `collections/`
