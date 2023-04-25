@@ -18,7 +18,9 @@ export AUTH_STACK_NAME="maap-auth-stack-dev"
 
 export COGNITO_APP_SECRET=$(aws cloudformation describe-stacks --stack-name $AUTH_STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`MAAPworkflowssecretoutput`].OutputValue' --output text)
 export STAC_INGESTOR_API_URL=$(aws cloudformation describe-stacks --stack-name $PGSTAC_STACK_NAME --query "Stacks[0].Outputs[?ExportName==\`ingestor-api-${ENV}\`].OutputValue" --output text)
-export DATA_MANAGEMENT_ROLE_ARN=$(aws cloudformation describe-stack-resources --stack-name $PGSTAC_STACK_NAME --query 'StackResources[?contains(LogicalResourceId, `dataaccessrole`) && ResourceType==`AWS::IAM::Role`].{Arn:PhysicalResourceId}' --output text)
+export ACCOUNT_NUMBER=$(aws sts get-caller-identity --query 'Account' --output text)
+export DATA_MANAGEMENT_ROLE_ID=$(aws cloudformation describe-stack-resources --stack-name $PGSTAC_STACK_NAME --query 'StackResources[?contains(LogicalResourceId, `dataaccessrole`) && ResourceType==`AWS::IAM::Role`].{Arn:PhysicalResourceId}' --output text)
+export DATA_MANAGEMENT_ROLE_ARN="arn:aws:iam::${ACCOUNT_NUMBER}:role/${DATA_MANAGEMENT_ROLE_ID}"
 
 # print out the environment variables created here with a nice header
 echo "Environment variables set:"
