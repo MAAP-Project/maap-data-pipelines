@@ -23,7 +23,7 @@ def handler(event, context):
 
     client = boto3.client("stepfunctions")
     client.start_execution(
-        name=f"{name[:38]}[{page:04d}]{str(uuid4())}",
+        name=f"{name[:38]}-{page:04d}-{str(uuid4())}",
         stateMachineArn=STEP_FUNCTION_ARN,
         input=json.dumps(event),
     )
