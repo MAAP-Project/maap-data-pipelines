@@ -17,7 +17,7 @@ export PGSTAC_STACK_NAME="MAAP-STAC-${ENV}-pgSTAC"
 export AUTH_STACK_NAME="maap-auth-stack-dev"
 
 export COGNITO_APP_SECRET=$(aws cloudformation describe-stacks --stack-name $AUTH_STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`MAAPworkflowssecretoutput`].OutputValue' --output text)
-export STAC_INGESTOR_API_URL=$(aws cloudformation describe-stacks --stack-name $PGSTAC_STACK_NAME --query 'Stacks[0].Outputs[?ExportName==`ingestor-api-dev`].OutputValue' --output text)
+export STAC_INGESTOR_API_URL=$(aws cloudformation describe-stacks --stack-name $PGSTAC_STACK_NAME --query "Stacks[0].Outputs[?ExportName==\`ingestor-api-${ENV}\`].OutputValue" --output text)
 export DATA_MANAGEMENT_ROLE_ARN=$(aws cloudformation describe-stack-resources --stack-name $PGSTAC_STACK_NAME --query 'StackResources[?contains(LogicalResourceId, `dataaccessrole`) && ResourceType==`AWS::IAM::Role`].{Arn:PhysicalResourceId}' --output text)
 
 # print out the environment variables created here with a nice header
@@ -37,5 +37,5 @@ read -p "Continue? (y/n) " -n 1 -r
 echo ""
 echo "Deploying..."
 
-# cdk synth --all --require-approval never
-# cdk deploy --all --require-approval never
+cdk synth --all --require-approval never
+cdk deploy --all --require-approval never

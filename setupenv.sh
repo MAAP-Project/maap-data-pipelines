@@ -13,9 +13,10 @@ set +a
 # for the auth deployment, we're always using the `dev` stage, so we can hardcode that.
 export PGSTAC_STACK_NAME="MAAP-STAC-${ENV}-pgSTAC"
 export AUTH_STACK_NAME="maap-auth-stack-dev"
+export APP_NAME="maap-data-pipelines"
 
 export COGNITO_APP_SECRET=$(aws cloudformation describe-stacks --stack-name $AUTH_STACK_NAME --query 'Stacks[0].Outputs[?OutputKey==`MAAPworkflowssecretoutput`].OutputValue' --output text)
-export STAC_INGESTOR_API_URL=$(aws cloudformation describe-stacks --stack-name $PGSTAC_STACK_NAME --query 'Stacks[0].Outputs[?ExportName==`ingestor-api-dev`].OutputValue' --output text)
+export STAC_INGESTOR_API_URL=$(aws cloudformation describe-stacks --stack-name $PGSTAC_STACK_NAME --query "Stacks[0].Outputs[?ExportName==\`ingestor-api-${ENV}\`].OutputValue" --output text)
 
 # print out the environment variables created here with a nice header
 echo "Environment variables set:"
