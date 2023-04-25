@@ -1,19 +1,3 @@
-The infrastructure stored as code in this repository is deployed on AWS using the AWS CDK stacks defined in the `/deploy` folder.
-
-## Requirements
-
-- `docker` is installed an running
-- `Node.js` is installed
-- the CLI for the AWS CDK is installed. See [cdk-getting-started](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html).
-- the environment variables in `/deploy/.env` are populated. 
-- The python requirements in `/deploy/requirements.txt` are installed.
-
-## Deployment
-
-From the `/deploy` folder : 
-- `cdk deploy --all` to deploy all resources. 
-- `cdk destroy --all` to destroy all resources.
-
 ## AWS resources glossary
 
 ### Lambdas

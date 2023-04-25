@@ -1,12 +1,11 @@
 # maap-data-pipelines
 
-This repo houses operating and deployment code for producing cloud-optimized
-data products and STAC metadata for interfaces such as https://github.com/NASA-IMPACT/delta-ui.
+This repo houses operating and deployment code for publishing STAC metadata to the MAAP project STAC catalog.
 
 ## Deployment
 
-For information about how to deploy the publication infrastructure, see the deployment readme. 
+For information about how to deploy this infrastructure, see the README in `/deploy`. 
 
 ## Operating
 
-For information about using the deployment to modify the catalog, see the OPERATING readme.
+For information about using the deployed infrastructure to modify the catalog, see OPERATING.
