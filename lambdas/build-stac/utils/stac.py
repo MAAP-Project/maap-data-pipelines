@@ -80,7 +80,7 @@ def create_item(
 
     rasterio_kwargs = {}
     if role_arn := os.environ.get("DATA_MANAGEMENT_ROLE_ARN"):
-        creds = role.assume_role(role_arn, "veda-data-pipelines_build-stac")
+        creds = role.assume_role(role_arn, "maap-data-pipelines_build-stac")
         rasterio_kwargs["session"] = AWSSession(
             aws_access_key_id=creds["AccessKeyId"],
             aws_secret_access_key=creds["SecretAccessKey"],
