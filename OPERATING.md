@@ -7,7 +7,7 @@ This guide provides information on how to run ingest, transformation and metadat
 We rely on a set of [poetry](https://pypi.org/project/poetry/) scripts to publish data to the catalog. 
 
 - run `pip install poetry` to install poetry.
-- run `setupenv.sh` to set up your environment variables for publication.
+- run `source setupenv.sh` to set up your environment variables for publication. Make sure to use `source` so that your environment variables persist. 
 - run `poetry install` to install the project and the dependencies.
 
 ## Usage

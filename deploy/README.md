@@ -16,4 +16,4 @@ These https://github.com/MAAP-Project/maap-cdk-pgstac https://github.com/MAAP-Pr
 
 ## Deployment
 
-Run `deploy.sh`. 
+Run `./deploy.sh`. Make sure to use `./` and not `source`. 
