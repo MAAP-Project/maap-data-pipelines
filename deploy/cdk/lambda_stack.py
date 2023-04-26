@@ -18,10 +18,9 @@ class LambdaStack(core.Stack):
         # external role
         external_role = iam.Role(
             self,
-            f"delta-backend-staging-{config.ENV}-external-role",
-            role_name=f"delta-backend-staging-{config.ENV}-external-role",
+            f"data-pipeline-lambda-role-{config.ENV}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            description="Role to write to external bucket",
+            description="Role for data pipeline lambdas",
         )
         external_role.attach_inline_policy(
             iam.Policy(
@@ -38,17 +37,7 @@ class LambdaStack(core.Stack):
                         ],
                         resources=["*"],
                     ),
-                    iam.PolicyStatement(
-                        resources=[config.DATA_MANAGEMENT_ROLE_ARN],
-                        actions=["sts:AssumeRole"],
-                    ),
                 ],
-            )
-        )
-        external_role.add_to_policy(
-            iam.PolicyStatement(
-                resources=[config.DATA_MANAGEMENT_ROLE_ARN],
-                actions=["sts:AssumeRole"],
             )
         )
 
