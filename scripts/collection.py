@@ -13,7 +13,7 @@ from .utils import args_handler, get_collections
 def map_collections(query: str, mapper: Callable[[IngestionApi, Any], None]):
     load_dotenv()
     files = get_collections(query)
-    ingestor = IngestionApi.from_veda_auth_secret(
+    ingestor = IngestionApi.from_maap_auth_secret(
         secret_id=os.environ.get("COGNITO_APP_SECRET"),
         base_url=os.environ.get("STAC_INGESTOR_API_URL"),
     )

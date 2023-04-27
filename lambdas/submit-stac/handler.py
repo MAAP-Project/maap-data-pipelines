@@ -43,7 +43,7 @@ class IngestionApi:
     token: str
 
     @classmethod
-    def from_veda_auth_secret(cls, *, secret_id: str, base_url: str) -> "IngestionApi":
+    def from_maap_auth_secret(cls, *, secret_id: str, base_url: str) -> "IngestionApi":
         cognito_details = cls._get_cognito_service_details(secret_id)
         credentials = cls._get_app_credentials(**cognito_details)
         return cls(token=credentials["access_token"], base_url=base_url)
@@ -109,7 +109,7 @@ def get_stac_item(event: Dict[str, Any]) -> Dict[str, Any]:
     raise Exception("No stac_item or stac_file_url provided")
 
 
-ingestor = IngestionApi.from_veda_auth_secret(
+ingestor = IngestionApi.from_maap_auth_secret(
     secret_id=COGNITO_APP_SECRET,
     base_url=STAC_INGESTOR_API_URL,
 )

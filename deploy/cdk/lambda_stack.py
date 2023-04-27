@@ -18,10 +18,9 @@ class LambdaStack(core.Stack):
         # external role
         external_role = iam.Role(
             self,
-            f"delta-backend-staging-{config.ENV}-external-role",
-            role_name=f"delta-backend-staging-{config.ENV}-external-role",
+            f"data-pipeline-lambda-role-{config.ENV}",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            description="Role to write to external bucket",
+            description="Role for data pipeline lambdas",
         )
         external_role.attach_inline_policy(
             iam.Policy(
@@ -38,17 +37,7 @@ class LambdaStack(core.Stack):
                         ],
                         resources=["*"],
                     ),
-                    iam.PolicyStatement(
-                        resources=[config.DATA_MANAGEMENT_ROLE_ARN],
-                        actions=["sts:AssumeRole"],
-                    ),
                 ],
-            )
-        )
-        external_role.add_to_policy(
-            iam.PolicyStatement(
-                resources=[config.DATA_MANAGEMENT_ROLE_ARN],
-                actions=["sts:AssumeRole"],
             )
         )
 
@@ -199,7 +188,7 @@ class LambdaStack(core.Stack):
         )
 
     def give_permissions(self):
-        internal_bucket = self._bucket(config.VEDA_DATA_BUCKET)
+        internal_bucket = self._bucket(config.MAAP_DATA_BUCKET)
         internal_bucket.grant_read_write(self.cogify_lambda.role)
 
         mcp_bucket = self._bucket(
@@ -207,7 +196,7 @@ class LambdaStack(core.Stack):
         )
 
         external_buckets = [
-            self._bucket(bucket) for bucket in config.VEDA_EXTERNAL_BUCKETS
+            self._bucket(bucket) for bucket in config.MAAP_EXTERNAL_BUCKETS
         ]
 
         for bucket in [internal_bucket, mcp_bucket, *external_buckets]:
