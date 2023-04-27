@@ -1,0 +1,17 @@
+{
+  "queue_messages": "true",
+  "collection": "AfriSAR_UAVSAR_Normalization_Area",
+  "version": "1",
+  "discovery": "cmr",
+  "mode": "cmr",
+  "asset_name": "data",
+  "asset_roles": [
+    "data"
+  ],
+  "asset_media_type": {
+    "bin": "application/octet-stream",
+    "hdr": "binary/octet-stream"
+  },
+  "data_file": "hdr",
+  "data_file_regex": "uavsar_AfriSAR_v1-normFactor_a41_r9"
+}
