@@ -11,7 +11,7 @@ DATA_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "dat
 def data_files(data, data_path):
     files = []
     for item in data:
-        files.extend(glob.glob(os.path.join(data_path, f"{item}*.json")))
+        files.extend(glob.glob(os.path.join(data_path, f"{item}.json")))
     return files
 
 
