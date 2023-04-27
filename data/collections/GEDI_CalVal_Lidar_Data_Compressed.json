@@ -26,7 +26,5 @@
     }
   },
   "links": [],
-  "dashboard:is_periodic": false,
-  "dashboard:time_density": null,
-  "assets": {}
+  "item_assets": {}
 }
