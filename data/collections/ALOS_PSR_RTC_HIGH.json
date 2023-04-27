@@ -1,0 +1,30 @@
+{
+  "id": "ALOS_PSR_RTC_HIGH",
+  "stac_version": "1.0.0",
+  "license": "not-provided",
+  "title": "Advance Land Observing Satellite Phased Array type L-band Synthetic Aperture Radar Radiometric Terrain-Corrected High Resolution products, Equatorial Western Africa, May 2006-March 2011",
+  "type": "Collection",
+  "description": "Creation of radiometrically terrain-corrected (RTC) products is a project of the Alaska Satellite Facility that makes SAR data accessible to a broader community of users. The project corrects synthetic aperture radar (SAR) geometry and radiometry, and presents the data in the GIS-friendly GeoTIFF format.Release of new ALOS PALSAR RTC products commenced October 2014 and was completed a year later. Data included in the RTC project are Fine Beam and Polarimetric scenes in all global land areas except Antarctica, Greenland, Iceland, and northern Eurasia.This collection is a subset over equatorial western Africa (N: 5.6, S: -8.6, E: 20.7, W: 6.5) for 16 May 2006 to 11 March 2011.",
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          "6.5",
+          "5.6",
+          "20.7",
+          "-8.6"
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          "2006-05-16T03:36:19.000Z",
+          "2011-03-11T21:33:26.000Z"
+        ]
+      ]
+    }
+  },
+  "links": [],
+  "item_assets": {}
+}
