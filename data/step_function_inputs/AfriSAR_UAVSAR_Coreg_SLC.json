@@ -5,6 +5,13 @@
     "discovery": "cmr",
     "mode": "cmr",
     "asset_name": "data",
-    "asset_roles": ["data"],
-    "test_links": true
+    "asset_roles": [
+      "data"
+    ],
+    "asset_media_type": {
+      "slc": "binary/octet-stream",
+      "vrt": "application/octet-stream"
+    },
+    "data_file": "coreg_HH.slc",
+    "data_file_regex": "uavsar_AfriSAR_v1_SLC-.*_.{5}_.{5}_.{3}_.{6}_L090"
 }
