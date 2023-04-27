@@ -1,6 +1,6 @@
 {
   "queue_messages": "true",
-  "collection": "Global_PALSAR2_PALSAR_Mosiac",
+  "collection": "Global_PALSAR2_PALSAR_Mosaic",
   "version": "1",
   "discovery": "cmr",
   "mode": "cmr",
