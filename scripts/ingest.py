@@ -11,7 +11,7 @@ from .utils import args_handler
 
 def list():
     load_dotenv()
-    ingestor = IngestionApi.from_veda_auth_secret(
+    ingestor = IngestionApi.from_maap_auth_secret(
         secret_id=os.environ.get("COGNITO_APP_SECRET"),
         base_url=os.environ.get("STAC_INGESTOR_API_URL"),
     )
@@ -30,7 +30,7 @@ def list():
 @args_handler
 def get(ids: List[str]):
     load_dotenv()
-    ingestor = IngestionApi.from_veda_auth_secret(
+    ingestor = IngestionApi.from_maap_auth_secret(
         secret_id=os.environ.get("COGNITO_APP_SECRET"),
         base_url=os.environ.get("STAC_INGESTOR_API_URL"),
     )
@@ -54,7 +54,7 @@ def get(ids: List[str]):
 @args_handler
 def delete(ids: List[str]):
     load_dotenv()
-    ingestor = IngestionApi.from_veda_auth_secret(
+    ingestor = IngestionApi.from_maap_auth_secret(
         secret_id=os.environ.get("COGNITO_APP_SECRET"),
         base_url=os.environ.get("STAC_INGESTOR_API_URL"),
     )

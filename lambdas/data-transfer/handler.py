@@ -21,7 +21,7 @@ def handler(event, context):
 
     kwargs = {}
     if role_arn := os.environ.get("DATA_MANAGEMENT_ROLE_ARN"):
-        creds = assume_role(role_arn, "veda-data-pipelines_data-transfer")
+        creds = assume_role(role_arn, "maap-data-pipelines_data-transfer")
         kwargs = {
             "aws_access_key_id": creds["AccessKeyId"],
             "aws_secret_access_key": creds["SecretAccessKey"],

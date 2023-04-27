@@ -2,8 +2,8 @@
 
 ## Architecture Diagram
 
-The following architecture diagram shows the **data transformation/ingestion pipeline**. Data can be discovered from CMR or from AWS S3. If the data needs to be converted into a cloud optimized geotiff, it's done in the cogification step. Then, it's uploaded to the official VEDA S3 bucket (if needed) and published to the STAC database and API.
-![image](veda-data_ingest_pipeline.png)
+The following architecture diagram shows the **data transformation/ingestion pipeline**. Data can be discovered from CMR or from AWS S3. If the data needs to be converted into a cloud optimized geotiff, it's done in the cogification step. Then, it's uploaded to the MAAP S3 bucket (if needed) and published to the STAC database and API.
+![image](maap-data_ingest_pipeline.png)
 
 
 ## The architecture as step functions

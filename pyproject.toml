@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "veda-optimized-data-pipelines"
+name = "maap-optimized-data-pipelines"
 version = "0.1.0"
 description = "Cloud pipelines for ingesting cloud optimized data"
 authors = ["IMPACT", "DevSeed"]
@@ -50,5 +50,3 @@ update-item = "scripts.item:update"
 get-ingest = "scripts.ingest:get"
 list-ingest = "scripts.ingest:list"
 delete-ingest = "scripts.ingest:delete"
-deploy = "scripts.cdk:deploy"
-destroy = "scripts.cdk:destroy"

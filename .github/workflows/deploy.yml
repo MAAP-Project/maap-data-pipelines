@@ -54,5 +54,5 @@ jobs:
           ENV: ${{ inputs.deploy_env }}
           COGNITO_APP_SECRET: ${{ secrets.COGNITO_APP_SECRET }}
           STAC_INGESTOR_API_URL: ${{ secrets.STAC_INGESTOR_API_URL }}
-          APP_NAME: "veda-data-pipelines"
+          APP_NAME: "maap-data-pipelines"
           DATA_MANAGEMENT_ROLE_ARN: ${{ secrets.DATA_MANAGEMENT_ROLE_ARN }}
