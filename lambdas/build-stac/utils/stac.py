@@ -207,6 +207,7 @@ def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> Lis
         return asset_roles
 
 
+# TODO the `roles` parameter type hint is wrong.
 def generate_asset(
     roles: Union[str, Dict[str, List[str]]],
     link: dict,
@@ -279,7 +280,11 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
                     "documentation", link["href"], link.get("type"), link.get("title")
                 )
             )
-
+        if link["rel"].endswith("browse#"):
+            asset = generate_asset(["thumbnail"], link, item)
+            if asset:
+                # name the asset after the href
+                assets[link["href"]] = asset
     if item.assets:
         # Removes the default data asset, exists as a duplicate
         del assets["data"]
