@@ -279,7 +279,16 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
                     "documentation", link["href"], link.get("type"), link.get("title")
                 )
             )
-
+        if link["rel"].endswith("browse#"):
+            asset = generate_asset(
+                "thumbnail",
+                link,
+                item
+            )
+            if asset:
+                # grab the file name to use as id, in case there are multiple thumbnails
+                fname = link["href"].split("/")[-1].split(".")[0]
+                assets[f'thumbnail-{fname}'] = asset
     if item.assets:
         # Removes the default data asset, exists as a duplicate
         del assets["data"]
