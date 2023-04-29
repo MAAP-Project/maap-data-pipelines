@@ -16,13 +16,84 @@ from rio_stac import stac
 from . import events, regex, role
 
 
+def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
+    if isinstance(asset_media_type, dict):
+        file = Path(link)
+        return asset_media_type.get(
+            file.suffix, asset_media_type.get(file.suffix[1:], None)
+        )
+    else:
+        return asset_media_type
+
+
+def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> List[str]:
+    if isinstance(asset_roles, dict):
+        file = Path(link)
+        return asset_roles.get(file.suffix, asset_roles.get(file.suffix[1:], default))
+    else:
+        return asset_roles
+
+
+def generate_asset(
+    roles: Union[List[str], Dict[str, List[str]]],
+    link: dict,
+    item: dict,
+    default_role: list = None,
+) -> pystac.Asset:
+    href = link.get("href")
+    if item.test_links and "http" in href:
+        try:
+            requests.head(href).raise_for_status()
+        except Exception as e:
+            print(f"Caught error for link {link}: {e}")
+            return None
+
+    # If type is in CMR link{} use that, else use the type from the asset_media_type
+    asset_media_type = link.get("type", _content_type(href, item.asset_media_type))
+    asset_roles = _roles(href, roles, default_role or ["data"])
+
+    return pystac.Asset(roles=asset_roles, href=href, media_type=asset_media_type)
+
+
+def generate_pystac_assets(
+    asset_roles: Union[List[str], Dict[str, List[str]]],
+    asset_media_type: Union[str, dict],
+    assets: Dict[str, str],
+) -> Dict[str, pystac.Asset]:
+    pystac_asset = lambda link: pystac.Asset(
+        roles=_roles(link, asset_roles, ["data"]),
+        href=link,
+        media_type=_content_type(link, asset_media_type),
+    )
+    return {key: pystac_asset(value) for key, value in assets.items()}
+
+
+def generate_link(
+    rel: Union[str, pystac.RelType],
+    target: Union[str, pystac.STACObject],
+    media_type: Optional[str] = None,
+    title: Optional[str] = None,
+    extra_fields: Optional[Dict[str, Any]] = None,
+) -> pystac.Link:
+    """
+    Generate a link object from a rel, target, media type, title, and extra fields.
+    """
+    return pystac.Link(
+        rel=rel,
+        target=target,
+        media_type=media_type,
+        title=title,
+        extra_fields=extra_fields,
+    )
+
+
 def create_item(
     id,
     properties,
-    links,
     datetime,
     item_url,
     collection,
+    links=None,
     mode=None,
     bbox=None,
     geometry=None,
@@ -55,6 +126,17 @@ def create_item(
         try:
             # `stac.create_stac_item` tries to opon a dataset with rasterio.
             # if that fails (since not all items are rasterio-readable), fall back to pystac.Item
+            if assets := generate_pystac_assets(asset_roles, asset_media_type, assets):
+                return stac.create_stac_item(
+                    id=id,
+                    source=item_url,
+                    collection=collection,
+                    input_datetime=datetime,
+                    properties=properties,
+                    with_proj=True,
+                    with_raster=True,
+                    assets=assets,
+                )
             return stac.create_stac_item(
                 id=id,
                 source=item_url,
@@ -63,7 +145,6 @@ def create_item(
                 properties=properties,
                 with_proj=True,
                 with_raster=True,
-                assets=assets,
                 asset_name=asset_name or "cog_default",
                 asset_roles=asset_roles or ["data", "layer"],
                 asset_media_type=(
@@ -138,6 +219,7 @@ def generate_stac_regexevent(item: events.RegexEvent) -> pystac.Item:
         datetime=single_datetime,
         item_url=item.remote_fileurl,
         collection=item.collection,
+        assets=item.assets,
         asset_name=item.asset_name,
         asset_roles=item.asset_roles,
         asset_media_type=item.asset_media_type,
@@ -189,65 +271,6 @@ def generate_geometry_from_cmr(polygons, boxes, reverse_coords) -> dict:
     return {"coordinates": [polygon_coords], "type": "Polygon"}
 
 
-def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
-    if isinstance(asset_media_type, dict):
-        file = Path(link)
-        return asset_media_type.get(
-            file.suffix, asset_media_type.get(file.suffix[1:], None)
-        )
-    else:
-        return asset_media_type
-
-
-def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> List[str]:
-    if isinstance(asset_roles, dict):
-        file = Path(link)
-        return asset_roles.get(file.suffix, asset_roles.get(file.suffix[1:], default))
-    else:
-        return asset_roles
-
-
-# TODO the `roles` parameter type hint is wrong.
-def generate_asset(
-    roles: Union[str, Dict[str, List[str]]],
-    link: dict,
-    item: dict,
-    default_role: list = None,
-) -> pystac.Asset:
-    href = link.get("href")
-    if item.test_links and "http" in href:
-        try:
-            requests.head(href).raise_for_status()
-        except Exception as e:
-            print(f"Caught error for link {link}: {e}")
-            return None
-
-    # If type is in CMR link{} use that, else use the type from the asset_media_type
-    asset_media_type = link.get("type", _content_type(href, item.asset_media_type))
-    asset_roles = _roles(href, roles, default_role or ["data"])
-
-    return pystac.Asset(roles=asset_roles, href=href, media_type=asset_media_type)
-
-
-def generate_link(
-    rel: Union[str, pystac.RelType],
-    target: Union[str, pystac.STACObject],
-    media_type: Optional[str] = None,
-    title: Optional[str] = None,
-    extra_fields: Optional[Dict[str, Any]] = None,
-) -> pystac.Link:
-    """
-    Generate a link object from a rel, target, media type, title, and extra fields.
-    """
-    return pystac.Link(
-        rel=rel,
-        target=target,
-        media_type=media_type,
-        title=title,
-        extra_fields=extra_fields,
-    )
-
-
 def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
     """
     Generates a dictionary of pystac.Asset's from cmr_json links
@@ -255,7 +278,7 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
     assets = {}
     links = []
     for link in cmr_links:
-        if link["rel"].endswith("data#"):
+        if link["rel"].endswith("/data#"):
             extension = os.path.splitext(link["href"])[-1].replace(".", "")
             if extension == "prj":
                 asset = generate_asset(
@@ -281,21 +304,16 @@ def from_cmr_links(cmr_links, item) -> Tuple[List, Dict[str, pystac.Asset]]:
                 )
             )
         if link["rel"].endswith("browse#"):
-            asset = generate_asset(["thumbnail"], link, item)
-            if asset:
-                # name the asset after the href
-                assets[link["href"]] = asset
+            if asset := generate_asset(item.asset_roles, link, item, ["thumbnail"]):
+                assets[os.path.basename(link["href"])] = asset
     if item.assets:
         # Removes the default data asset, exists as a duplicate
         del assets["data"]
 
-        pystac_asset = lambda link: pystac.Asset(
-            roles=_roles(link, item.asset_roles, ["data"]),
-            href=link,
-            media_type=_content_type(link, item.asset_media_type),
-        )
-        pystac_assets = {key: pystac_asset(value) for key, value in item.assets.items()}
-        return links, dict(sorted((pystac_assets | assets).items()))
+        if pystac_assets := generate_pystac_assets(
+            item.asset_roles, item.asset_media_type, item.assets
+        ):
+            return links, dict(sorted((pystac_assets | assets).items()))
 
     return links, assets
 

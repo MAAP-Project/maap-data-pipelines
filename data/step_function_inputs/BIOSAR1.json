@@ -2,11 +2,26 @@
     "queue_messages": "true",
     "collection": "BIOSAR1",
     "version": "1",
+    "mode": "cmr",
     "discovery": "cmr",
     "asset_name": "data",
-    "mode": "cmr",
-    "asset_roles": ["data"],
-    "asset_media_type": "image/tiff",
+    "limit": 270,
+    "asset_roles": {
+        "prj": ["metadata"],
+        "dbf": ["data"],
+        "shp": ["data"],
+        "shx": ["data"],
+        "tiff": ["data"]
+    },
+    "asset_media_type": {
+        "prj": "application/octet-stream",
+        "dbf": "binary/octet-stream",
+        "shp": "binary/octet-stream",
+        "shx": "binary/octet-stream",
+        "tiff": "image/tiff"
+    },
     "reverse_coords": true,
-    "link_rel": "http://esipfed.org/ns/fedsearch/1.1/data#"
+    "link_rel": "http://esipfed.org/ns/fedsearch/1.1/data#",
+    "data_file": "HH.tiff",
+    "data_file_regex": "biosar1(_.{2})?_.{3}"
 }

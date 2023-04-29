@@ -27,12 +27,11 @@ class BaseEvent(BaseModel, frozen=True, arbitrary_types_allowed=True):
         if self.id_regex:
             id_components = re.findall(self.id_regex, self.remote_fileurl)
             assert len(id_components) == 1
-            id = "-".join(id_components[0])
+            return "-".join(id_components[0])
         elif self.product_id:
-            id = self.product_id
+            return self.product_id
         else:
-            id = Path(self.remote_fileurl).stem
-        return id
+            return Path(self.remote_fileurl).stem
 
 
 class CmrEvent(BaseEvent):

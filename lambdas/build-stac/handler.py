@@ -55,40 +55,74 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-    sample_event = {
-        "collection": "GEDI02_A",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
-        "granule_id": "G1201782029-NASA_MAAP",
-        "id": "G1201782029-NASA_MAAP",
-        "mode": "cmr",
-        "test_links": None,
-        "reverse_coords": None,
-        "asset_name": "data",
-        "asset_roles": ["data"],
-        "asset_media_type": "application/x-hdf5",
-    }
-    print(json.dumps(handler(sample_event, {}), indent=2))
+    # sample_event = {
+    #     "collection": "GEDI02_A",
+    #     "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
+    #     "granule_id": "G1201782029-NASA_MAAP",
+    #     "id": "G1201782029-NASA_MAAP",
+    #     "mode": "cmr",
+    #     "test_links": None,
+    #     "reverse_coords": None,
+    #     "asset_name": "data",
+    #     "asset_roles": ["data"],
+    #     "asset_media_type": "application/x-hdf5",
+    # }
+    # print(json.dumps(handler(sample_event, {}), indent=2))
 
-    asset_event = {
-        "collection": "AfriSAR_UAVSAR_KZ",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
-        "granule_id": "G1200110083-NASA_MAAP",
-        "id": "G1200110083-NASA_MAAP",
+    # asset_event = {
+    #     "collection": "AfriSAR_UAVSAR_KZ",
+    #     "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
+    #     "granule_id": "G1200110083-NASA_MAAP",
+    #     "id": "G1200110083-NASA_MAAP",
+    #     "mode": "cmr",
+    #     "test_links": None,
+    #     "reverse_coords": None,
+    #     "asset_name": "data",
+    #     "asset_roles": ["data"],
+    #     "asset_media_type": {
+    #         "vrt": "application/octet-stream",
+    #         "bin": "binary/octet-stream",
+    #         "hdr": "binary/octet-stream",
+    #     },
+    #     "assets": {
+    #         "bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.bin",
+    #         "hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
+    #         "vrt": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.vrt",
+    #     },
+    #     "product_id": "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz",
+    # }
+    # print(json.dumps(handler(asset_event, {}), indent=2))
+
+    regex_event = {
+        "collection": "BIOSAR1",
+        "remote_fileurl": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_SLC_HH.tiff",
+        "granule_id": "G1200110617-ESA_MAAP",
+        "id": "G1200110617-ESA_MAAP",
         "mode": "cmr",
         "test_links": None,
-        "reverse_coords": None,
+        "reverse_coords": True,
         "asset_name": "data",
-        "asset_roles": ["data"],
+        "asset_roles": {
+            "prj": ["metadata"],
+            "dbf": ["data"],
+            "shp": ["data"],
+            "shx": ["data"],
+            "tiff": ["data"],
+        },
         "asset_media_type": {
-            "vrt": "application/octet-stream",
-            "bin": "binary/octet-stream",
-            "hdr": "binary/octet-stream",
+            "prj": "application/octet-stream",
+            "dbf": "binary/octet-stream",
+            "shp": "binary/octet-stream",
+            "shx": "binary/octet-stream",
+            "tiff": "image/tiff",
         },
         "assets": {
-            "bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.bin",
-            "hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
-            "vrt": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.vrt",
+            "SLC_HH.tiff": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_SLC_HH.tiff",
+            "SLC_HV.tiff": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_SLC_HV.tiff",
+            "SLC_VH.tiff": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_SLC_VH.tiff",
+            "SLC_VV.tiff": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_SLC_VV.tiff",
+            "kz.tiff": "https://bmap-catalogue-data.oss.eu-west-0.prod-cloud-ocb.orange-business.com/Campaign_data/biosar1/biosar1_109_kz.tiff",
         },
-        "product_id": "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz",
+        "product_id": "biosar1_109",
     }
-    print(json.dumps(handler(asset_event, {}), indent=2))
+    print(json.dumps(handler(regex_event, {}), indent=2))
