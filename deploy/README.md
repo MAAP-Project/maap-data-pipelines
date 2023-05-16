@@ -7,7 +7,7 @@ The code in this folder deploys AWS Cloudformation stacks used to publish STAC m
 - `docker` is installed an running
 - `Node.js` is installed
 - the [CLI for the AWS CDK is installed](https://docs.aws.amazon.com/cdk/v2/guide/cli.html)
-- the environment variables in `.env` are populated. Most of the configuration is determined programatically, see below.
+- there is an `.env` file in this folder, populated with the environment variables. Most of the configuration is determined programatically, see the script mentioned below.
 - The python requirements in `requirements.txt` are installed.
 
 ### infrastructure dependencies
