@@ -1,0 +1,31 @@
+{
+    "id": "NASA_JPL_global_agb_mean_2020",
+    "stac_version": "1.0.0",
+    "license": "not-provided",
+    "title": "NASA JPL Global Above Ground Biomass Mean Prediction 2020",
+    "type": "Collection",
+    "description": "NASA JPL Global Above Ground Biomass Mean Prediction 2020",
+    "extent": {
+      "spatial": {
+        "bbox": [
+          [
+            -180,
+            -90,
+            180,
+            90
+          ]
+        ]
+      },
+      "temporal": {
+        "interval": [
+          [
+            "2020-01-01T00:00:00.000Z",
+            "2020-12-31T23:59:59.999Z"
+          ]
+        ]
+      }
+    },
+    "links": [],
+    "item_assets": {}
+  }
+  
