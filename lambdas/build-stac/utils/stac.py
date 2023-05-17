@@ -19,7 +19,6 @@ from . import events, regex, role
 def create_item(
     id,
     properties,
-    links,
     datetime,
     item_url,
     collection,
@@ -30,6 +29,7 @@ def create_item(
     asset_name=None,
     asset_roles=None,
     asset_media_type=None,
+    links=None
 ) -> pystac.Item:
     """
     Function to create a stac item from a COG using rio_stac
@@ -45,6 +45,8 @@ def create_item(
             collection=collection,
             bbox=bbox,
         )
+        if links is None:
+            raise ValueError("links must be provided")
         stac_item.links.extend(links)
         stac_item.assets = assets
         return stac_item
