@@ -28,3 +28,29 @@ The `collections/` directory holds json files representing the data for MAAP col
 ### `step_function_inputs/`
 
 The `step_function_inputs/` directory holds json files representing the step function inputs for initiating the discovery, ingest and publication workflows. `poetry run insert-item COLLECTION_NAME` assumes there is a valid file for `COLLECTION_NAME` in that folder.
+
+## Step Function Inputs
+"bucket": String name of the bucket where the data is located
+"collection": String name of the collection
+"cogify": Boolean value to queue data files for transformation into Cloud Optimized GeoTIFFs
+"directory": String bucket prefix, defaults to "file-staging"
+"discovery": String type of discovery ("s3" or "inventory")
+"filename_regex": String regex of data file naming e.g "^(.*).tif$"
+"prefix": String prefix inside of the bucket where the data is located
+"start_after": Integer used in boto3.client("s3").paginate to indicate which page to start after
+"upload": true
+"user_shared": Boolean value data upload to USER_SHARED_BUCKET
+
+**_DEPRECATED_**: Step Function inputs used to discover granules from CMR
+"asset_media_type": 
+"asset_name":
+"asset_roles":
+"data_file": String regex of the data file to build STAC record around for a multi-data file CMR collection
+"data_file_regex": String regex of multiple data files in a CMR collection
+"link_rel": 
+"mode": "stac" or "cmr"
+"queue_messages": Boolean
+"reverse_coords": Boolean value to reverse the generated geoJSON object from the list of coordinates provided by CMR
+"temporal":
+"test_links": 
+"version": Version of the CMR Collection

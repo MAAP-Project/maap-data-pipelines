@@ -4,8 +4,8 @@ This repo houses operating and deployment code for publishing STAC metadata to t
 
 ## Deployment
 
-For information about how to deploy this infrastructure, see the README in `/deploy`. 
+For information about how to deploy this infrastructure, see [DEPLOY](./deploy/DEPLOY.md). 
 
 ## Operating
 
-For information about using the deployed infrastructure to modify the catalog, see OPERATING.
+For information about using the deployed infrastructure to modify the catalog, see [OPERATING](./OPERATING.md).
