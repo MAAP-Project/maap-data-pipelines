@@ -45,9 +45,8 @@ def create_item(
             collection=collection,
             bbox=bbox,
         )
-        if links is None:
-            raise ValueError("links must be provided")
-        stac_item.links.extend(links)
+        if links:
+            stac_item.links.extend(links)
         stac_item.assets = assets
         return stac_item
 
