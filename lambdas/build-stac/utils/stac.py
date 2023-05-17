@@ -29,7 +29,7 @@ def create_item(
     asset_name=None,
     asset_roles=None,
     asset_media_type=None,
-    links=None
+    links=None,
 ) -> pystac.Item:
     """
     Function to create a stac item from a COG using rio_stac
