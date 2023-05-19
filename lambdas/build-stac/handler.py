@@ -56,7 +56,6 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-
     asset_event = {
         "collection": "icesat2-boreal",
         "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831.tif",
