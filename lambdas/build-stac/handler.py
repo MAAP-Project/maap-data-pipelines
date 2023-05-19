@@ -4,9 +4,9 @@ from sys import getsizeof
 from typing import Any, Dict, TypedDict, Union
 from uuid import uuid4
 
+import pystac
 import smart_open
 from utils import events, stac
-import pystac
 
 
 class S3LinkOutput(TypedDict):
@@ -56,23 +56,23 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-    
+
     asset_event = {
-      "collection": "icesat2-boreal",
-      "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831.tif",
-      "upload": True,
-      "user_shared": False,
-      "properties": None,
-      "asset_roles": ["data"],
-      "asset_name":"tif",
-      "asset_media_type": {
+        "collection": "icesat2-boreal",
+        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831.tif",
+        "upload": True,
+        "user_shared": False,
+        "properties": None,
+        "asset_roles": ["data"],
+        "asset_name": "tif",
+        "asset_media_type": {
             "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
             "csv": "application/octet-stream",
         },
-      "assets": {
-        "train_data": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
-      },
-      "product_id": "boreal_agb_202302061675671806_3831"
+        "assets": {
+            "train_data": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
+        },
+        "product_id": "boreal_agb_202302061675671806_3831",
     }
-    
+
     print(json.dumps(handler(asset_event, {}), indent=2))

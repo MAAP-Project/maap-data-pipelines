@@ -71,17 +71,19 @@ def create_item(
                     or "image/tiff; application=geotiff; profile=cloud-optimized"
                 ),
             )
-            
+
             if assets:
                 pystac_asset = lambda link: pystac.Asset(
                     roles=_roles(link, asset_roles, ["data"]),
                     href=link,
                     media_type=_content_type(link, asset_media_type),
                 )
-                pystac_assets = {key: pystac_asset(value) for key, value in assets.items()}
-        
+                pystac_assets = {
+                    key: pystac_asset(value) for key, value in assets.items()
+                }
+
             stac_record.assets = dict(stac_record.assets | pystac_assets)
-        
+
             return stac_record
         except Exception as e:
             print(f"Caught exception {e}")

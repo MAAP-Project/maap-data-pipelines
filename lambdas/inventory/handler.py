@@ -1,10 +1,11 @@
 import json
 import os
-import re
 import pprint
-import boto3
+import re
 from csv import DictReader
 from urllib.parse import urlparse
+
+import boto3
 
 
 def assume_role(role_arn, session_name):
@@ -65,10 +66,10 @@ def handler(event, context):
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
-                "assets" : {
+                "assets": {
                     "train_data": csv_filename,
                 },
-                "product_id" : os.path.splitext(filename)[0].split('/')[-1],
+                "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
             payload["objects"].append(file_obj)
             file_obj_size = len(json.dumps(file_obj, ensure_ascii=False).encode("utf8"))
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         "file_url_key": "s3_path",
         "csv_file_url_key": "s3_path_train",
         "upload": True,
-        "asset_name": "tif"
+        "asset_name": "tif",
     }
 
     handler(sample_event, {})
