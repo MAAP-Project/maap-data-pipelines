@@ -6,6 +6,7 @@ from uuid import uuid4
 
 import smart_open
 from utils import events, stac
+import pystac
 
 
 class S3LinkOutput(TypedDict):
@@ -55,40 +56,23 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 
 if __name__ == "__main__":
-    sample_event = {
-        "collection": "GEDI02_A",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/GEDI02_A___002/2020.12.31/GEDI02_A_2020366232302_O11636_02_T08595_02_003_02_V002.h5",
-        "granule_id": "G1201782029-NASA_MAAP",
-        "id": "G1201782029-NASA_MAAP",
-        "mode": "cmr",
-        "test_links": None,
-        "reverse_coords": None,
-        "asset_name": "data",
-        "asset_roles": ["data"],
-        "asset_media_type": "application/x-hdf5",
-    }
-    print(json.dumps(handler(sample_event, {}), indent=2))
-
+    
     asset_event = {
-        "collection": "AfriSAR_UAVSAR_KZ",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
-        "granule_id": "G1200110083-NASA_MAAP",
-        "id": "G1200110083-NASA_MAAP",
-        "mode": "cmr",
-        "test_links": None,
-        "reverse_coords": None,
-        "asset_name": "data",
-        "asset_roles": ["data"],
-        "asset_media_type": {
-            "vrt": "application/octet-stream",
-            "bin": "binary/octet-stream",
-            "hdr": "binary/octet-stream",
+      "collection": "icesat2-boreal",
+      "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831.tif",
+      "upload": True,
+      "user_shared": False,
+      "properties": None,
+      "asset_roles": ["data"],
+      "asset_name":"tif",
+      "asset_media_type": {
+            "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "csv": "application/octet-stream",
         },
-        "assets": {
-            "bin": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.bin",
-            "hdr": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.hdr",
-            "vrt": "s3://nasa-maap-data-store/file-staging/nasa-map/AfriSAR_UAVSAR_KZ___1/uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz.vrt",
-        },
-        "product_id": "uavsar_AfriSAR_v1-coreg_fine_lopenp_14043_16008_140_009_160225_kz",
+      "assets": {
+        "train_data": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
+      },
+      "product_id": "boreal_agb_202302061675671806_3831"
     }
+    
     print(json.dumps(handler(asset_event, {}), indent=2))
