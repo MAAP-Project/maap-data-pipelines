@@ -59,7 +59,7 @@ def handler(event, context):
                 continue
             if file_objs_size > 230000:
                 payload["start_after"] = start_after
-                break            
+                break
             file_obj = {
                 "collection": collection,
                 "remote_fileurl": f"{filename}",
