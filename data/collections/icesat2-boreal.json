@@ -23,23 +23,22 @@
     "license": "CC-BY",
     "description": "Aboveground biomass density c.2020 gridded to 30m derived from ICESat-2, Harmonized Landsat-Sentinel2 and Copernicus DEM. Band 1 is the data band. Band 2 is the standard deviation.",
     "item_assets": {
-        "cog_default": {
+        "tif": {
             "type": "image/tiff; application=geotiff; profile=cloud-optimized",
             "roles": [
                 "data",
                 "layer"
             ],
-            "title": "Default COG Layer",
-            "description": "Cloud optimized default layer to display on map"
+            "title": "Cloud Optimized GeoTIFF of boreal data",
+            "description": "Cloud Optimized GeoTIFF of boreal data"
         },
-        "documentation": {
-            "type": "text/html",
+        "csv": {
+            "type": "text/csv",
             "roles": [
-                "documentation"
+                "data"
             ],
-            "title": "Find and open data with STAC",
-            "description": "Find and open data with STAC",
-            "href": "https://docs.maap-project.org/en/stac/search/searching_the_stac_catalog.html"
+            "title": "CSV",
+            "description": "CSV of training data"
         }        
     },
     "stac_version": "1.0.0"

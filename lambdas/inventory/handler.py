@@ -59,18 +59,21 @@ def handler(event, context):
                 continue
             if file_objs_size > 230000:
                 payload["start_after"] = start_after
-                break
+                break            
             file_obj = {
                 "collection": collection,
                 "remote_fileurl": f"{filename}",
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
-                "assets": {
-                    "train_data": csv_filename,
-                },
+                "assets": {},
                 "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
+            if csv_filename:
+                file_obj["assets"]["csv"] = csv_filename
+            for key, value in event.items():
+                if "asset" in key:
+                    file_obj[key] = value
             payload["objects"].append(file_obj)
             file_obj_size = len(json.dumps(file_obj, ensure_ascii=False).encode("utf8"))
             file_objs_size = file_objs_size + file_obj_size
