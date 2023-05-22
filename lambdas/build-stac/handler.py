@@ -66,12 +66,11 @@ if __name__ == "__main__":
         "asset_name": "tif",
         "asset_media_type": {
             "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "csv": "application/octet-stream",
+            "csv": "text/csv",
         },
         "assets": {
-            "train_data": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
+            "csv": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
         },
         "product_id": "boreal_agb_202302061675671806_3831",
     }
-
     print(json.dumps(handler(asset_event, {}), indent=2))

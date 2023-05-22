@@ -20,7 +20,7 @@ def assume_role(role_arn, session_name):
 def handler(event, context):
     inventory_url = event.get("inventory_url")
     file_url_key = event.get("file_url_key", "s3_path")
-    csv_file_url_key = event.get("csv_file_url_key", "s3_path_train")
+    csv_file_url_key = event.get("csv_file_url_key")
     parsed_url = urlparse(inventory_url, allow_fragments=False)
     bucket = parsed_url.netloc
     inventory_filename = parsed_url.path.strip("/")
@@ -66,11 +66,14 @@ def handler(event, context):
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
-                "assets": {
-                    "train_data": csv_filename,
-                },
+                "assets": {},
                 "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
+            if csv_filename:
+                file_obj["assets"]["csv"] = csv_filename
+            for key, value in event.items():
+                if "asset" in key:
+                    file_obj[key] = value
             payload["objects"].append(file_obj)
             file_obj_size = len(json.dumps(file_obj, ensure_ascii=False).encode("utf8"))
             file_objs_size = file_objs_size + file_obj_size
