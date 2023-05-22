@@ -1,10 +1,11 @@
 import json
 import os
-import re
 import pprint
-import boto3
+import re
 from csv import DictReader
 from urllib.parse import urlparse
+
+import boto3
 
 
 def assume_role(role_arn, session_name):
@@ -19,6 +20,7 @@ def assume_role(role_arn, session_name):
 def handler(event, context):
     inventory_url = event.get("inventory_url")
     file_url_key = event.get("file_url_key", "s3_path")
+    csv_file_url_key = event.get("csv_file_url_key", "s3_path_train")
     parsed_url = urlparse(inventory_url, allow_fragments=False)
     bucket = parsed_url.netloc
     inventory_filename = parsed_url.path.strip("/")
@@ -52,6 +54,7 @@ def handler(event, context):
         list_of_dict = list(dict_reader)
         for file_dict in list_of_dict[start_after:]:
             filename = file_dict[file_url_key]
+            csv_filename = file_dict[csv_file_url_key]
             if filename_regex and not re.match(filename_regex, filename):
                 continue
             if file_objs_size > 230000:
@@ -63,23 +66,29 @@ def handler(event, context):
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
+                "assets": {
+                    "train_data": csv_filename,
+                },
+                "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
             payload["objects"].append(file_obj)
             file_obj_size = len(json.dumps(file_obj, ensure_ascii=False).encode("utf8"))
             file_objs_size = file_objs_size + file_obj_size
             start_after += 1
     # For testing purposes:
-    # print(json.dumps(payload, indent=2))
+    print(json.dumps(payload, indent=2))
     return payload
 
 
 if __name__ == "__main__":
     sample_event = {
         "collection": "icesat2-boreal",
-        "inventory_url": "s3://maap-data-store-test/AGB_tindex_master.csv",
+        "inventory_url": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/AGB_tindex_master_train_data.csv",
         "discovery": "inventory",
         "file_url_key": "s3_path",
+        "csv_file_url_key": "s3_path_train",
         "upload": True,
+        "asset_name": "tif",
     }
 
     handler(sample_event, {})

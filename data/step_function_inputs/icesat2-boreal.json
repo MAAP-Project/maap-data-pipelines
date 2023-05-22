@@ -1,6 +1,13 @@
 {
     "collection": "icesat2-boreal",
-    "inventory_url": "s3://maap-ops-workspace/shared/lduncanson/DPS_tile_lists/2023/AGB_tindex_master.csv",
+    "inventory_url": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/AGB_tindex_master_train_data.csv",
     "discovery": "inventory",
-    "upload": true
+    "upload": false,
+    "asset_roles": ["data"],
+    "asset_media_type": {
+            "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "csv": "text/csv"
+        },
+    "asset_name": "tif",
+    "csv_file_url_key": "s3_path_train"
 }

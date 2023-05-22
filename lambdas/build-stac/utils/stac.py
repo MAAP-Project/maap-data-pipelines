@@ -56,7 +56,7 @@ def create_item(
         try:
             # `stac.create_stac_item` tries to opon a dataset with rasterio.
             # if that fails (since not all items are rasterio-readable), fall back to pystac.Item
-            return stac.create_stac_item(
+            stac_record = stac.create_stac_item(
                 id=id,
                 source=item_url,
                 collection=collection,
@@ -64,14 +64,27 @@ def create_item(
                 properties=properties,
                 with_proj=True,
                 with_raster=True,
-                assets=assets,
                 asset_name=asset_name or "cog_default",
                 asset_roles=asset_roles or ["data", "layer"],
                 asset_media_type=(
-                    asset_media_type
+                    _content_type(item_url, asset_media_type)
                     or "image/tiff; application=geotiff; profile=cloud-optimized"
                 ),
             )
+
+            if assets:
+                pystac_asset = lambda link: pystac.Asset(
+                    roles=_roles(link, asset_roles, ["data"]),
+                    href=link,
+                    media_type=_content_type(link, asset_media_type),
+                )
+                pystac_assets = {
+                    key: pystac_asset(value) for key, value in assets.items()
+                }
+
+            stac_record.assets = dict(stac_record.assets | pystac_assets)
+
+            return stac_record
         except Exception as e:
             print(f"Caught exception {e}")
             if "not recognized as a supported file format" in str(e):
@@ -142,6 +155,9 @@ def generate_stac_regexevent(item: events.RegexEvent) -> pystac.Item:
         asset_name=item.asset_name,
         asset_roles=item.asset_roles,
         asset_media_type=item.asset_media_type,
+        assets=item.assets,
+        mode=item.mode,
+        links=[],
     )
 
 
