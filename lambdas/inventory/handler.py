@@ -20,7 +20,7 @@ def assume_role(role_arn, session_name):
 def handler(event, context):
     inventory_url = event.get("inventory_url")
     file_url_key = event.get("file_url_key", "s3_path")
-    csv_file_url_key = event.get("csv_file_url_key", "s3_path_train")
+    csv_file_url_key = event.get("csv_file_url_key")
     parsed_url = urlparse(inventory_url, allow_fragments=False)
     bucket = parsed_url.netloc
     inventory_filename = parsed_url.path.strip("/")
