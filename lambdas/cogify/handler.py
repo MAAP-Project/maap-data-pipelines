@@ -189,6 +189,7 @@ def geotiff_to_cog(upload: bool, **config):
         GDAL_TIFF_INTERNAL_MASK=True,
         GDAL_TIFF_OVR_BLOCKSIZE="128",
     )
+    gdal_config.update(config.get("gdal_config_options", {}) or {})
 
     filename = config["filename"]
 
@@ -215,10 +216,7 @@ def handler(event, context):
     collection = event["collection"]
     downloaded_filename = download_file(file_uri=filename)
 
-    to_cog_config = {}
-    to_cog_config["filename"] = downloaded_filename
-    to_cog_config["collection"] = collection
-
+    to_cog_config = {"filename": downloaded_filename, "collection": collection}
     return_obj = {"collection": event["collection"]}
 
     if filename.endswith(".he5"):

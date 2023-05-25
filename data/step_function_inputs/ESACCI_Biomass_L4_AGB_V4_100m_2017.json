@@ -1,0 +1,10 @@
+{
+  "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
+  "bucket": "maap-ops-workspace",
+  "prefix": "nehajo88/Data/CCI_2017/",
+  "filename_regex": "^(.*).tif$",
+  "discovery": "s3",
+  "upload": true,
+  "user_shared": true,
+  "cogify": true
+}
