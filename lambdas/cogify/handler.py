@@ -217,6 +217,8 @@ def handler(event, context):
     downloaded_filename = download_file(file_uri=filename)
 
     to_cog_config = {"filename": downloaded_filename, "collection": collection}
+    if event.get("gdal_config_options"):
+        to_cog_config["gdal_config_options"] = event["gdal_config_options"]
     return_obj = {"collection": event["collection"]}
 
     if filename.endswith(".he5"):
