@@ -48,7 +48,6 @@ class LambdaStack(core.Stack):
             "../lambdas/s3-discovery",
             role=external_role,
             env={
-                "BUCKET": config.MCP_BUCKETS.get(config.ENV, ""),
                 "DATA_MANAGEMENT_ROLE_ARN": config.DATA_MANAGEMENT_ROLE_ARN,
             },
         )
@@ -66,7 +65,6 @@ class LambdaStack(core.Stack):
             "../lambdas/inventory",
             role=external_role,
             env={
-                "BUCKET": config.MCP_BUCKETS.get(config.ENV, ""),
                 "DATA_MANAGEMENT_ROLE_ARN": config.DATA_MANAGEMENT_ROLE_ARN,
             },
         )
@@ -126,9 +124,7 @@ class LambdaStack(core.Stack):
             f"{construct_id}-data-transfer-fn",
             "../lambdas/data-transfer",
             env={
-                "BUCKET": config.MCP_BUCKETS.get(
-                    config.ENV, config.MCP_BUCKETS.get("stage")
-                ),
+                "DATA_TRANSFER_BUCKET": config.DATA_TRANSFER_BUCKET,
                 "USER_SHARED_BUCKET": config.USER_SHARED_BUCKET,
                 "DATA_MANAGEMENT_ROLE_ARN": config.DATA_MANAGEMENT_ROLE_ARN,
             },
@@ -191,20 +187,23 @@ class LambdaStack(core.Stack):
         internal_bucket = self._bucket(config.MAAP_DATA_BUCKET)
         internal_bucket.grant_read_write(self.cogify_lambda.role)
 
-        mcp_bucket = self._bucket(
-            config.MCP_BUCKETS.get(config.ENV, config.MCP_BUCKETS.get("stage"))
-        )
+        mcp_buckets = [
+            self._bucket(bucket)
+            for bucket in config.MCP_BUCKETS.get(config.ENV, config.MCP_BUCKETS.get("stage"))
+        ]
 
         external_buckets = [
             self._bucket(bucket) for bucket in config.MAAP_EXTERNAL_BUCKETS
         ]
 
-        for bucket in [internal_bucket, mcp_bucket, *external_buckets]:
+        for bucket in [internal_bucket, *mcp_buckets, *external_buckets]:
             bucket.grant_read(self.s3_discovery_lambda.role)
             bucket.grant_read(self.build_stac_lambda.role)
             bucket.grant_read(self.data_transfer_lambda.role)
 
-        mcp_bucket.grant_read_write(self.data_transfer_lambda)
+        for bucket in mcp_buckets:
+            bucket.grant_read_write(self.data_transfer_lambda)
+            bucket.grant_read_write(self.cogify_lambda.role)
 
         cognito_app_secret = secretsmanager.Secret.from_secret_name_v2(
             self, f"{self.construct_id}-secret", config.COGNITO_APP_SECRET
