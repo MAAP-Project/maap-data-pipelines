@@ -3,6 +3,6 @@
   "discovery": "inventory",
   "inventory_url": "s3://maap-ops-workspace/jjfrench/CCI_2017.csv",
   "upload": true,
-  "user_shared": true,
+  "user_shared": false,
   "cogify": true
 }
