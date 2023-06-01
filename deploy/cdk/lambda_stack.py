@@ -189,7 +189,9 @@ class LambdaStack(core.Stack):
 
         mcp_buckets = [
             self._bucket(bucket)
-            for bucket in config.MCP_BUCKETS.get(config.ENV, config.MCP_BUCKETS.get("stage"))
+            for bucket in config.MCP_BUCKETS.get(
+                config.ENV, config.MCP_BUCKETS.get("stage")
+            )
         ]
 
         external_buckets = [
