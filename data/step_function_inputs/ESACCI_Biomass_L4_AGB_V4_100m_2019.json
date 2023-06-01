@@ -1,10 +1,9 @@
 {
   "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2019",
-  "bucket": "maap-ops-workspace",
-  "prefix": "nehajo88/Data/CCI_2019/",
-  "filename_regex": "^(.*).tif$",
-  "discovery": "s3",
+  "discovery": "inventory",
+  "inventory_url": "s3://maap-ops-workspace/jjfrench/CCI_2019.csv",
   "upload": true,
   "user_shared": true,
   "cogify": true
 }
+
