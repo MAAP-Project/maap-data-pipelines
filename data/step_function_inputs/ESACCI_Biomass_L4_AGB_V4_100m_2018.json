@@ -4,6 +4,7 @@
   "inventory_url": "s3://maap-ops-workspace/jjfrench/CCI_2018.csv",
   "upload": true,
   "user_shared": false,
-  "cogify": true
+  "cogify": true,
+  "csv_file_url_key": "s3_path"
 }
 
