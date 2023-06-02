@@ -40,7 +40,7 @@ def build_output_location(outfilename, collection):
 
 
 def upload_fileobject(file_obj, bucket, key):
-    print(f'uploading to s3://{bucket}/{key}')
+    print(f"uploading to s3://{bucket}/{key}")
     s3.upload_fileobj(file_obj, bucket, key)
 
 
@@ -88,8 +88,8 @@ def download_file(file_uri: str):
 
 def hdf5_to_cog(upload, **config):
     """HDF5 to COG."""
-    
-    # download 
+
+    # download
     filename = download_file(file_uri=config["filename"])
     # Open existing dataset
     variable_name = config["variable_name"]
@@ -198,21 +198,25 @@ def geotiff_to_cog(upload: bool, **config):
     gdal_config.update(config.get("gdal_config_options", {}) or {})
 
     # processing in memory, and then maybe upload to S3
-    
+
     with MemoryFile() as mem_dst:
-        
-        cog_translate(config["filename"], mem_dst.name, dst_kwargs=output_profile, config=gdal_config, in_memory=True, allow_intermediate_compression=True)
-    
+        cog_translate(
+            config["filename"],
+            mem_dst.name,
+            dst_kwargs=output_profile,
+            config=gdal_config,
+            in_memory=True,
+            allow_intermediate_compression=True,
+        )
+
         return_obj = {"filename": mem_dst.name}
-            
+
         if upload:
             target_bucket = output_bucket
             target_key = f"{output_dir}/{Path(config['filename']).parts[-1]}"
             upload_fileobject(mem_dst, target_bucket, target_key)
-            return_obj = {'remote_fileurl': f's3://{target_bucket}/{target_key}'}
-        
-    
-        
+            return_obj = {"remote_fileurl": f"s3://{target_bucket}/{target_key}"}
+
     return return_obj
 
 
@@ -220,11 +224,10 @@ def handler(event, context):
     filename = event["remote_fileurl"]
     collection = event["collection"]
 
-
     to_cog_config = {"filename": filename, "collection": collection}
     if event.get("gdal_config_options"):
         to_cog_config["gdal_config_options"] = event["gdal_config_options"]
-    
+
     return_obj = {"collection": event["collection"]}
 
     if filename.endswith(".he5"):
@@ -246,17 +249,15 @@ def handler(event, context):
 
 
 if __name__ == "__main__":
-    
-    
     sample_event = {
-    "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
-    "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif",
-    "upload": True,
-    "user_shared": False,
-    "properties": None,
-    "assets": {
-        "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif"
-    },
-    "product_id": "S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0"
+        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
+        "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif",
+        "upload": True,
+        "user_shared": False,
+        "properties": None,
+        "assets": {
+            "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif"
+        },
+        "product_id": "S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0",
     }
     handler(sample_event, {})
