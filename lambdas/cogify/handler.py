@@ -5,7 +5,7 @@ import requests
 import boto3
 
 import numpy as np
-
+from pathlib import Path
 from affine import Affine
 from netCDF4 import Dataset
 from rasterio.crs import CRS
@@ -31,17 +31,23 @@ output_bucket = config["DEFAULT"]["output_bucket"]
 output_dir = config["DEFAULT"]["output_dir"]
 
 
-def build_output_location(outfilename, collection, suffix):
+def build_output_location(outfilename, collection):
     """return bucket and key"""
     return (
         output_bucket,
-        f"{output_dir}/{collection}/{outfilename.split('/tmp/')[1]}{suffix}",
+        f"{output_dir}/{collection}/{Path(outfilename).parts[-1]}",
     )
 
 
-def upload_file(outfilename, collection, suffix=""):
+def upload_fileobject(file_obj, bucket, key):
+    print(f'uploading to s3://{bucket}/{key}')
+    s3.upload_fileobj(file_obj, bucket, key)
+
+
+def upload_file(outfilename, collection):
     print("Uploading file to S3")
-    bucket, key = build_output_location(outfilename, collection, suffix)
+    bucket, key = build_output_location(outfilename, collection)
+    print(f"s3://{bucket}/{key}")
     try:
         s3.upload_file(
             outfilename,
@@ -82,8 +88,10 @@ def download_file(file_uri: str):
 
 def hdf5_to_cog(upload, **config):
     """HDF5 to COG."""
+    
+    # download 
+    filename = download_file(file_uri=config["filename"])
     # Open existing dataset
-    filename = str(config["filename"])
     variable_name = config["variable_name"]
     x_variable, y_variable = config.get("x_variable"), config.get("y_variable")
     group = config.get("group")
@@ -179,11 +187,9 @@ def hdf5_to_cog(upload, **config):
 def geotiff_to_cog(upload: bool, **config):
     """Convert image to COG and write to S3"""
 
-    # using default rio cogeo settings
     output_profile = cog_profiles.get("deflate")
     output_profile.update(dict(BIGTIFF="IF_SAFER"))
 
-    # Dataset Open option (see gdalwarp `-oo` option)
     gdal_config = dict(
         GDAL_NUM_THREADS="ALL_CPUS",
         GDAL_TIFF_INTERNAL_MASK=True,
@@ -191,34 +197,34 @@ def geotiff_to_cog(upload: bool, **config):
     )
     gdal_config.update(config.get("gdal_config_options", {}) or {})
 
-    filename = config["filename"]
-
-    cog_translate(
-        source=filename,
-        dst_path=filename,
-        dst_kwargs=output_profile,
-        config=gdal_config,
-        in_memory=False,
-        quiet=True,
-    )
-
-    return_obj = {"filename": filename}
-
-    if upload:
-        s3location = upload_file(filename, config["collection"], suffix=".tif")
-        return_obj["remote_fileurl"] = s3location
-
+    # processing in memory, and then maybe upload to S3
+    
+    with MemoryFile() as mem_dst:
+        
+        cog_translate(config["filename"], mem_dst.name, dst_kwargs=output_profile, config=gdal_config, in_memory=True, allow_intermediate_compression=True)
+    
+        return_obj = {"filename": mem_dst.name}
+            
+        if upload:
+            target_bucket = output_bucket
+            target_key = f"{output_dir}/{Path(config['filename']).parts[-1]}"
+            upload_fileobject(mem_dst, target_bucket, target_key)
+            return_obj = {'remote_fileurl': f's3://{target_bucket}/{target_key}'}
+        
+    
+        
     return return_obj
 
 
 def handler(event, context):
     filename = event["remote_fileurl"]
     collection = event["collection"]
-    downloaded_filename = download_file(file_uri=filename)
 
-    to_cog_config = {"filename": downloaded_filename, "collection": collection}
+
+    to_cog_config = {"filename": filename, "collection": collection}
     if event.get("gdal_config_options"):
         to_cog_config["gdal_config_options"] = event["gdal_config_options"]
+    
     return_obj = {"collection": event["collection"]}
 
     if filename.endswith(".he5"):
@@ -240,9 +246,17 @@ def handler(event, context):
 
 
 if __name__ == "__main__":
+    
+    
     sample_event = {
-        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2020",
-        "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2020/N00E000_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2020-fv4.0.tif",
-        "upload": True,
+    "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
+    "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif",
+    "upload": True,
+    "user_shared": False,
+    "properties": None,
+    "assets": {
+        "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif"
+    },
+    "product_id": "S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0"
     }
     handler(sample_event, {})
