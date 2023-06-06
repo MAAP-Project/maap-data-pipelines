@@ -124,7 +124,7 @@ class LambdaStack(core.Stack):
             f"{construct_id}-data-transfer-fn",
             "../lambdas/data-transfer",
             env={
-                "DATA_TRANSFER_BUCKET": config.DATA_TRANSFER_BUCKET,
+                "BUCKET": config.DATA_TRANSFER_BUCKET,
                 "USER_SHARED_BUCKET": config.USER_SHARED_BUCKET,
                 "DATA_MANAGEMENT_ROLE_ARN": config.DATA_MANAGEMENT_ROLE_ARN,
             },
