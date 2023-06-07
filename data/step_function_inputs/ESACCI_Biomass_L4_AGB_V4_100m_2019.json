@@ -5,6 +5,11 @@
   "upload": true,
   "user_shared": false,
   "cogify": true,
-  "csv_file_url_key": "s3_path"
+  "csv_file_url_key": "s3_path",
+  "asset_roles": ["data"],
+  "asset_media_type": {
+          "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
+    },
+  "asset_name": "tif"
 }
 
