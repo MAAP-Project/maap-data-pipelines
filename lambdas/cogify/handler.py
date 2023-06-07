@@ -213,7 +213,7 @@ def geotiff_to_cog(upload: bool, **config):
 
         if upload:
             target_bucket = output_bucket
-            target_key = f"{output_dir}/{Path(config['filename']).parts[-1]}"
+            target_key = f"{output_dir}/{config['collection']}/{Path(config['filename']).parts[-1]}"
             upload_fileobject(mem_dst, target_bucket, target_key)
             return_obj = {"remote_fileurl": f"s3://{target_bucket}/{target_key}"}
 
