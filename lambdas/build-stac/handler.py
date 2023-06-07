@@ -57,20 +57,13 @@ def handler(event: Dict[str, Any], context) -> Union[S3LinkOutput, StacItemOutpu
 
 if __name__ == "__main__":
     asset_event = {
-        "collection": "icesat2-boreal",
-        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831.tif",
-        "upload": True,
-        "user_shared": False,
-        "properties": None,
+        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
         "asset_roles": ["data"],
-        "asset_name": "tif",
         "asset_media_type": {
-            "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "csv": "text/csv",
+            "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
         },
-        "assets": {
-            "csv": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/boreal_agb_202302061675671806_3831_train_data.csv"
-        },
-        "product_id": "boreal_agb_202302061675671806_3831",
+        "asset_name": "tif",
+        "remote_fileurl": "s3://nasa-maap-data-store/file-staging/nasa-map/N70E140_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif",
     }
+
     print(json.dumps(handler(asset_event, {}), indent=2))
