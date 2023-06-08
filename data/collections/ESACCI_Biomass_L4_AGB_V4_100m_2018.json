@@ -26,5 +26,15 @@
       }
     },
     "links": [],
-    "item_assets": {}
+    "item_assets": {
+      "tif": {
+          "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles": [
+              "data",
+              "layer"
+          ],
+          "title": "Cloud Optimized GeoTIFF",
+          "description": "Cloud Optimized GeoTIFF"
+      }        
+  }
 }
