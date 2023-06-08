@@ -5,7 +5,7 @@ import requests
 import boto3
 
 import numpy as np
-
+from pathlib import Path
 from affine import Affine
 from netCDF4 import Dataset
 from rasterio.crs import CRS
@@ -31,18 +31,33 @@ output_bucket = config["DEFAULT"]["output_bucket"]
 output_dir = config["DEFAULT"]["output_dir"]
 
 
+def build_output_location(outfilename, collection):
+    """return bucket and key"""
+    return (
+        output_bucket,
+        f"{output_dir}/{collection}/{Path(outfilename).parts[-1]}",
+    )
+
+
+def upload_fileobject(file_obj, bucket, key):
+    print(f"uploading to s3://{bucket}/{key}")
+    s3.upload_fileobj(file_obj, bucket, key)
+
+
 def upload_file(outfilename, collection):
-    filename = outfilename.split("/tmp/")[1]
+    print("Uploading file to S3")
+    bucket, key = build_output_location(outfilename, collection)
+    print(f"s3://{bucket}/{key}")
     try:
         s3.upload_file(
             outfilename,
-            output_bucket,
-            f"{collection}/{filename}",
+            bucket,
+            key,
         )
         print("File uploaded to s3")
-        return f"s3://{output_bucket}/{collection}/{filename}"
+        return f"s3://{bucket}/{key}"
     except:
-        print("Failed to copy to S3 bucket")
+        print(f"Failed to copy to S3 bucket and key : {bucket}/{key}")
         raise
 
 
@@ -71,10 +86,12 @@ def download_file(file_uri: str):
     return filename
 
 
-def to_cog(upload, **config):
+def hdf5_to_cog(upload, **config):
     """HDF5 to COG."""
+
+    # download
+    filename = download_file(file_uri=config["filename"])
     # Open existing dataset
-    filename = str(config["filename"])
     variable_name = config["variable_name"]
     x_variable, y_variable = config.get("x_variable"), config.get("y_variable")
     group = config.get("group")
@@ -167,19 +184,65 @@ def to_cog(upload, **config):
     return return_obj
 
 
+def geotiff_to_cog(upload: bool, **config):
+    """Convert image to COG and write to S3"""
+
+    output_profile = cog_profiles.get("deflate")
+    output_profile.update(dict(BIGTIFF="IF_SAFER"))
+
+    gdal_config = dict(
+        GDAL_NUM_THREADS="ALL_CPUS",
+        GDAL_TIFF_INTERNAL_MASK=True,
+        GDAL_TIFF_OVR_BLOCKSIZE="128",
+    )
+    gdal_config.update(config.get("gdal_config_options", {}) or {})
+
+    # processing in memory, and then maybe upload to S3
+
+    with MemoryFile() as mem_dst:
+        cog_translate(
+            config["filename"],
+            mem_dst.name,
+            dst_kwargs=output_profile,
+            config=gdal_config,
+            in_memory=True,
+            allow_intermediate_compression=True,
+        )
+
+        return_obj = {"filename": mem_dst.name}
+
+        if upload:
+            target_bucket = output_bucket
+            target_key = f"{output_dir}/{config['collection']}/{Path(config['filename']).parts[-1]}"
+            upload_fileobject(mem_dst, target_bucket, target_key)
+            return_obj = {"remote_fileurl": f"s3://{target_bucket}/{target_key}"}
+
+    return return_obj
+
+
 def handler(event, context):
-    filename = event["href"]
+    return_obj = {**event}
+
+    filename = event["remote_fileurl"]
     collection = event["collection"]
-    to_cog_config = config._sections[collection]
-    downloaded_filename = download_file(file_uri=filename)
-    to_cog_config["filename"] = downloaded_filename
-    to_cog_config["collection"] = collection
 
-    return_obj = {"granule_id": event["granule_id"], "collection": event["collection"]}
+    to_cog_config = {"filename": filename, "collection": collection}
+    if event.get("gdal_config_options"):
+        to_cog_config["gdal_config_options"] = event["gdal_config_options"]
 
-    output_locations = to_cog(upload=event.get("upload", False), **to_cog_config)
+    if filename.endswith(".he5"):
+        config._sections[collection]
+        output_locations = hdf5_to_cog(
+            upload=event.get("upload", False), **to_cog_config
+        )
+    elif filename.endswith(".tif"):
+        output_locations = geotiff_to_cog(
+            upload=event.get("upload", False), **to_cog_config
+        )
+    else:
+        raise ValueError(f"File type not supported: {filename}")
 
-    return_obj = {**return_obj, **output_locations}
+    return_obj.update(**output_locations)
 
     print(f"Returning data: {return_obj}")
     return return_obj
@@ -187,9 +250,19 @@ def handler(event, context):
 
 if __name__ == "__main__":
     sample_event = {
-        "collection": "OMDOAO3e",
-        "href": "https://acdisc.gesdisc.eosdis.nasa.gov/data//Aura_OMI_Level3/OMDOAO3e.003/2022/OMI-Aura_L3-OMDOAO3e_2022m0120_v003-2022m0122t021759.he5",
-        "upload": False,
-        "granule_id": "G2205784904-GES_DISC",
+        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2020",
+        "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2020/S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0.tif",
+        "upload": True,
+        "user_shared": False,
+        "properties": None,
+        "assets": {
+            "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2020/S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0.tif"
+        },
+        "product_id": "S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0",
+        "asset_roles": ["data"],
+        "asset_media_type": {
+            "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
+        },
+        "asset_name": "tif",
     }
     handler(sample_event, {})

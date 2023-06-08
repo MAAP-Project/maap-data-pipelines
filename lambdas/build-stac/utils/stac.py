@@ -82,7 +82,7 @@ def create_item(
                     key: pystac_asset(value) for key, value in assets.items()
                 }
 
-            stac_record.assets = dict(stac_record.assets | pystac_assets)
+                stac_record.assets = dict(stac_record.assets | pystac_assets)
 
             return stac_record
         except Exception as e:

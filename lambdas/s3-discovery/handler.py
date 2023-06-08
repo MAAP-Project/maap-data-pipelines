@@ -72,6 +72,8 @@ def handler(event, context):
                 "properties": properties,
                 **date_fields,
             }
+            if event.get("gdal_config_options"):
+                file_obj["gdal_config_options"] = event["gdal_config_options"]
             payload["objects"].append(file_obj)
             file_obj_size = len(json.dumps(file_obj, ensure_ascii=False).encode("utf8"))
             file_objs_size = file_objs_size + file_obj_size

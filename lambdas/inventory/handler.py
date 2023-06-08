@@ -19,8 +19,8 @@ def assume_role(role_arn, session_name):
 
 def handler(event, context):
     inventory_url = event.get("inventory_url")
+    csv_file_url_key = event.get("csv_file_url_key", None)
     file_url_key = event.get("file_url_key", "s3_path")
-    csv_file_url_key = event.get("csv_file_url_key")
     parsed_url = urlparse(inventory_url, allow_fragments=False)
     bucket = parsed_url.netloc
     inventory_filename = parsed_url.path.strip("/")
@@ -54,7 +54,7 @@ def handler(event, context):
         list_of_dict = list(dict_reader)
         for file_dict in list_of_dict[start_after:]:
             filename = file_dict[file_url_key]
-            csv_filename = file_dict[csv_file_url_key]
+            csv_filename = file_dict[csv_file_url_key] if csv_file_url_key else None
             if filename_regex and not re.match(filename_regex, filename):
                 continue
             if file_objs_size > 230000:
@@ -66,11 +66,10 @@ def handler(event, context):
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
-                "assets": {},
                 "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
             if csv_filename:
-                file_obj["assets"]["csv"] = csv_filename
+                file_obj["assets"] = {"csv": csv_filename}
             for key, value in event.items():
                 if "asset" in key:
                     file_obj[key] = value
@@ -79,19 +78,24 @@ def handler(event, context):
             file_objs_size = file_objs_size + file_obj_size
             start_after += 1
     # For testing purposes:
-    print(json.dumps(payload, indent=2))
+    print(json.dumps(payload["objects"][0], indent=2))
     return payload
 
 
 if __name__ == "__main__":
     sample_event = {
-        "collection": "icesat2-boreal",
-        "inventory_url": "s3://nasa-maap-data-store/file-staging/nasa-map/icesat2-boreal/AGB_tindex_master_train_data.csv",
+        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2020",
         "discovery": "inventory",
-        "file_url_key": "s3_path",
-        "csv_file_url_key": "s3_path_train",
+        "inventory_url": "s3://maap-ops-workspace/emileten/CCI_2020.csv",
         "upload": True,
+        "user_shared": False,
+        "asset_roles": ["data"],
+        "asset_media_type": {
+            "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
+        },
         "asset_name": "tif",
+        "cogify": True,
+        "start_after": 404,
     }
 
     handler(sample_event, {})

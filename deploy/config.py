@@ -13,10 +13,12 @@ APP_NAME = "maap-data-pipelines"
 MAAP_DATA_BUCKET = "maap-data-store"
 MAAP_EXTERNAL_BUCKETS = []
 MCP_BUCKETS = {
-    "prod": "nasa-maap-data-store",
-    "stage": "nasa-maap-data-store",
-    "dev": "nasa-maap-data-store",
+    "prod": ["nasa-maap-data-store", "maap-ops-workspace"],
+    "stage": ["nasa-maap-data-store", "maap-ops-workspace"],
+    "dev": ["nasa-maap-data-store", "maap-ops-workspace"],
+    "test": ["nasa-maap-data-store", "maap-ops-workspace"],
 }
+DATA_TRANSFER_BUCKET = "nasa-maap-data-store"
 USER_SHARED_BUCKET = "maap-user-shared-data"
 
 # This should throw if it is not provided
