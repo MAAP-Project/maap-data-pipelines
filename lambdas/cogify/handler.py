@@ -221,14 +221,15 @@ def geotiff_to_cog(upload: bool, **config):
 
 
 def handler(event, context):
+    
+    return_obj = {**event}
+    
     filename = event["remote_fileurl"]
     collection = event["collection"]
 
     to_cog_config = {"filename": filename, "collection": collection}
     if event.get("gdal_config_options"):
         to_cog_config["gdal_config_options"] = event["gdal_config_options"]
-
-    return_obj = {"collection": event["collection"]}
 
     if filename.endswith(".he5"):
         config._sections[collection]
@@ -242,22 +243,29 @@ def handler(event, context):
     else:
         raise ValueError(f"File type not supported: {filename}")
 
-    return_obj = {**return_obj, **output_locations}
-
+    return_obj.update(**output_locations)
+    
     print(f"Returning data: {return_obj}")
     return return_obj
 
 
 if __name__ == "__main__":
     sample_event = {
-        "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
-        "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif",
-        "upload": True,
-        "user_shared": False,
-        "properties": None,
-        "assets": {
-            "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2017/S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0.tif"
-        },
-        "product_id": "S20W060_ESACCI-BIOMASS-L4-AGB-MERGED-100m-2017-fv4.0",
+    "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2020",
+    "remote_fileurl": "s3://maap-ops-workspace/nehajo88/Data/CCI_2020/S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0.tif",
+    "upload": True,
+    "user_shared": False,
+    "properties": None,
+    "assets": {
+        "csv": "s3://maap-ops-workspace/nehajo88/Data/CCI_2020/S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0.tif"
+    },
+    "product_id": "S50W070_ESACCI-BIOMASS-L4-AGB_SD-MERGED-100m-2020-fv4.0",
+    "asset_roles": [
+        "data"
+    ],
+    "asset_media_type": {
+        "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
+    },
+    "asset_name": "tif"
     }
     handler(sample_event, {})
