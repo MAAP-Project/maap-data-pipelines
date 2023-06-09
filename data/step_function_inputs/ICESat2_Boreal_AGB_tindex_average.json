@@ -1,0 +1,13 @@
+{
+    "collection": "ICESat2_Boreal_AGB_tindex_average",
+    "discovery": "inventory",
+    "inventory_url": "s3://nasa-maap-data-store/file-staging/dashboard-datasets/icesat2-boreal/icesat2_boreal_AGB_tindex_average_4500_inventory.csv",
+    "asset_media_type": {
+        "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "xml": "application/xml"
+    },
+    "cogify": false,
+    "upload": false,
+    "metadata_file_url_key": "metadata",
+    "metadata_type": "xml"
+}
