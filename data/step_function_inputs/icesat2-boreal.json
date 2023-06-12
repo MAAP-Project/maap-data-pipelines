@@ -5,9 +5,10 @@
     "upload": false,
     "asset_roles": ["data"],
     "asset_media_type": {
-            "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
-            "csv": "text/csv"
-        },
+        "tif": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "csv": "text/csv"
+    },
     "asset_name": "tif",
-    "csv_file_url_key": "s3_path_train"
+    "metadata_file_url_key": "s3_path_train",
+    "metadata_type": "csv"
 }

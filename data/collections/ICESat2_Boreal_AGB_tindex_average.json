@@ -1,0 +1,27 @@
+{
+    "id": "ICESat2_Boreal_AGB_tindex_average",
+    "stac_version": "1.0.0",
+    "license": "not-provided",
+    "title": "ICESat2-Boreal Above Ground Biomass T-Index Average",
+    "type": "Collection",
+    "description": "ICESat2-Boreal Above Ground Biomass T-Index Average",
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -180.0, 28.777507583618583, 180.0, 90.0
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+              [
+                "2019-01-01T00:00:00.000Z",
+                "2021-01-01T00:00:00.000Z"
+              ]
+            ]
+          }   
+    },
+    "links": [],
+    "item_assets": {}
+}

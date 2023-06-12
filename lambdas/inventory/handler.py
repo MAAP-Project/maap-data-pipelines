@@ -19,7 +19,8 @@ def assume_role(role_arn, session_name):
 
 def handler(event, context):
     inventory_url = event.get("inventory_url")
-    csv_file_url_key = event.get("csv_file_url_key", None)
+    metadata_file_url_key = event.get("metadata_file_url_key", None)
+    metadata_type = event.get("metadata_type", None)
     file_url_key = event.get("file_url_key", "s3_path")
     parsed_url = urlparse(inventory_url, allow_fragments=False)
     bucket = parsed_url.netloc
@@ -54,7 +55,9 @@ def handler(event, context):
         list_of_dict = list(dict_reader)
         for file_dict in list_of_dict[start_after:]:
             filename = file_dict[file_url_key]
-            csv_filename = file_dict[csv_file_url_key] if csv_file_url_key else None
+            metadata_filename = (
+                file_dict[metadata_file_url_key] if metadata_file_url_key else None
+            )
             if filename_regex and not re.match(filename_regex, filename):
                 continue
             if file_objs_size > 230000:
@@ -68,8 +71,8 @@ def handler(event, context):
                 "properties": event.get("properties", None),
                 "product_id": os.path.splitext(filename)[0].split("/")[-1],
             }
-            if csv_filename:
-                file_obj["assets"] = {"csv": csv_filename}
+            if metadata_filename and metadata_type:
+                file_obj["assets"] = {metadata_type: metadata_filename}
             for key, value in event.items():
                 if "asset" in key:
                     file_obj[key] = value
