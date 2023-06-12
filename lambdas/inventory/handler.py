@@ -55,7 +55,9 @@ def handler(event, context):
         list_of_dict = list(dict_reader)
         for file_dict in list_of_dict[start_after:]:
             filename = file_dict[file_url_key]
-            metadata_filename = file_dict[metadata_file_url_key] if metadata_file_url_key else None
+            metadata_filename = (
+                file_dict[metadata_file_url_key] if metadata_file_url_key else None
+            )
             if filename_regex and not re.match(filename_regex, filename):
                 continue
             if file_objs_size > 230000:
