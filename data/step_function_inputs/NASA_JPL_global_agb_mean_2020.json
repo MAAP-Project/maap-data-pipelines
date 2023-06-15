@@ -3,5 +3,7 @@
     "discovery": "inventory",
     "inventory_url": "s3://maap-user-shared-data/nasa_jpl_global_agb_mean_2020/inventory.csv",
     "cogify": false,
-    "upload": false
+    "upload": false,
+    "metadata_file_url_key": "s3_path",
+    "metadata_type": "csv"
 }

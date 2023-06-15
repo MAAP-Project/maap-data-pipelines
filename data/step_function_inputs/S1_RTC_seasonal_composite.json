@@ -3,5 +3,7 @@
     "discovery": "inventory",
     "inventory_url": "s3://maap-ops-workspace/shared/nathanmthomas/sentinel1_seasonal_comps/inventory.csv",
     "cogify": false,
-    "upload": false
+    "upload": false,
+    "metadata_file_url_key": "s3_path",
+    "metadata_type": "csv"
 }
