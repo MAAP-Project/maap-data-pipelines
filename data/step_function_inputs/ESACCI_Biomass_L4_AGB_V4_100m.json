@@ -1,7 +1,7 @@
 {
   "collection": "ESACCI_Biomass_L4_AGB_V4_100m",
   "discovery": "inventory",
-  "inventory_url": "s3://maap-ops-workspace/emileten/CCI_V4_Inventory.csv",
+  "inventory_url": "s3://maap-ops-workspace/jjfrench/CCI_V4_Inventory.csv",
   "upload": true,
   "user_shared": false,
   "cogify": true,
