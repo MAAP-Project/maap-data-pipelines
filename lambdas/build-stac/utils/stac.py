@@ -73,13 +73,13 @@ def create_item(
             )
 
             if assets:
-                pystac_asset = lambda link: pystac.Asset(
-                    roles=_roles(link, asset_roles, ["data"]),
+                pystac_asset = lambda filename, link: pystac.Asset(
+                    roles=_roles(link, asset_roles, ["data"], filename),
                     href=link,
-                    media_type=_content_type(link, asset_media_type),
+                    media_type=_content_type(link, asset_media_type, filename),
                 )
                 pystac_assets = {
-                    key: pystac_asset(value) for key, value in assets.items()
+                    key: pystac_asset(key, value) for key, value in assets.items()
                 }
 
                 stac_record.assets = dict(stac_record.assets | pystac_assets)
@@ -206,25 +206,31 @@ def generate_geometry_from_cmr(polygons, boxes, reverse_coords) -> dict:
     return {"coordinates": [polygon_coords], "type": "Polygon"}
 
 
-def _content_type(link: str, asset_media_type: Union[str, dict]) -> str:
+def _content_type(
+    link: str, asset_media_type: Union[str, dict], filename: str = None
+) -> str:
     if isinstance(asset_media_type, dict):
         file = Path(link)
         return asset_media_type.get(
             file.suffix, asset_media_type.get(file.suffix[1:], None)
-        )
+        ) or asset_media_type.get(filename)
     else:
         return asset_media_type
 
 
-def _roles(link: str, asset_roles: Union[list, dict], default: List[str]) -> List[str]:
+def _roles(
+    link: str, asset_roles: Union[list, dict], default: List[str], filename: str = None
+) -> List[str]:
     if isinstance(asset_roles, dict):
         file = Path(link)
-        return asset_roles.get(file.suffix, asset_roles.get(file.suffix[1:], default))
+        return asset_roles.get(
+            file.suffix,
+            asset_roles.get(file.suffix[1:], asset_roles.get(filename, default)),
+        )
     else:
         return asset_roles
 
 
-# TODO the `roles` parameter type hint is wrong.
 def generate_asset(
     roles: Union[str, Dict[str, List[str]]],
     link: dict,
