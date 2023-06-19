@@ -1,0 +1,15 @@
+{
+    "collection": "NCEO_Africa_AGB_100m_2017",
+    "discovery": "inventory",
+    "inventory_url": "s3://maap-ops-workspace/jjfrench/NCEO_Africa_AGB_100m_2017_inventory.csv",
+    "asset_media_type": {
+        "biomass": "image/tiff; application=geotiff; profile=cloud-optimized",
+        "standard_deviation": "image/tiff; application=geotiff; profile=cloud-optimized"
+    },
+    "asset_roles": ["data"],
+    "cogify": false,
+    "upload": false,
+    "asset_name": "biomass",
+    "metadata_file_url_key": "metadata",
+    "metadata_type": "standard_deviation"
+}
