@@ -178,7 +178,6 @@ class StepFunctionStack(core.Stack):
         lambda_stack: "LambdaStack",
         queue_stack: "QueueStack",
     ) -> stepfunctions.StateMachine:
-        
         def _cogify_lambda_task(id):
             return self._lambda_task(
                 id,
@@ -198,7 +197,9 @@ class StepFunctionStack(core.Stack):
             items_path=stepfunctions.JsonPath.string_at("$"),
         )
 
-        only_cogify_workflow = concurrent_cogify.iterator(_cogify_lambda_task("Only Cogify"))
+        only_cogify_workflow = concurrent_cogify.iterator(
+            _cogify_lambda_task("Only Cogify")
+        )
 
         cogify_and_ingest_workflow = concurrent_cogify.iterator(
             _cogify_lambda_task("Cogify").next(enqueue_task)
