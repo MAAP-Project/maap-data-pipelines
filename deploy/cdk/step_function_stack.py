@@ -190,28 +190,25 @@ class StepFunctionStack(core.Stack):
             input_path="$.Payload",
         )
 
-        concurrent_cogify = stepfunctions.Map(
-            self,
-            "Run concurrent cogifications",
-            max_concurrency=1,
-            items_path=stepfunctions.JsonPath.string_at("$"),
-        )
-
-        only_cogify_workflow = concurrent_cogify.iterator(
-            _cogify_lambda_task("Only Cogify")
-        )
-
-        cogify_and_ingest_workflow = concurrent_cogify.iterator(
-            _cogify_lambda_task("Cogify").next(enqueue_task)
-        )
-
         workflow = (
             stepfunctions.Choice(self, "Ingest?")
             .when(
-                stepfunctions.Condition.boolean_equals("$.Payload.ingest", True),
-                cogify_and_ingest_workflow,
+                stepfunctions.Condition.boolean_equals("$[0].ingest", False),
+                stepfunctions.Map(
+                    self,
+                    "Run concurrent cogifications",
+                    max_concurrency=1,
+                    items_path=stepfunctions.JsonPath.string_at("$"),
+                ).iterator(_cogify_lambda_task("Only Cogify")),
             )
-            .otherwise(only_cogify_workflow)
+            .otherwise(
+                stepfunctions.Map(
+                    self,
+                    "Run concurrent cogifications then ingest",
+                    max_concurrency=1,
+                    items_path=stepfunctions.JsonPath.string_at("$"),
+                ).iterator(_cogify_lambda_task("Cogify").next(enqueue_task))
+            )
         )
 
         return stepfunctions.StateMachine(
