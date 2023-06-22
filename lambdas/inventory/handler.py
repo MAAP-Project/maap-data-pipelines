@@ -70,6 +70,7 @@ def handler(event, context):
                 "user_shared": event.get("user_shared", False),
                 "properties": event.get("properties", None),
                 "product_id": os.path.splitext(filename)[0].split("/")[-1],
+                "ingest": event.get("ingest", True)
             }
             if metadata_filename and metadata_type:
                 file_obj["assets"] = {metadata_type: metadata_filename}
