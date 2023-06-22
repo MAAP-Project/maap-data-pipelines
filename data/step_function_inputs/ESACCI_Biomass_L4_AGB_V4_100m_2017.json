@@ -2,9 +2,10 @@
   "collection": "ESACCI_Biomass_L4_AGB_V4_100m_2017",
   "discovery": "inventory",
   "inventory_url": "s3://maap-ops-workspace/jjfrench/CCI_2017.csv",
-  "upload": true,
+  "upload": false,
   "user_shared": false,
   "cogify": true,
+  "ingest": false,
   "asset_roles": ["data"],
   "asset_media_type": {
           "tif": "image/tiff; application=geotiff; profile=cloud-optimized"
