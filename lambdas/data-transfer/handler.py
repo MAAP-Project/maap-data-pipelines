@@ -31,7 +31,8 @@ def handler(event, context):
     target_s3 = boto3.client("s3", **kwargs)
 
     for object in event:
-        if not object.get("upload"):
+        # Skip objects that are already in the target bucket (`upload` gets also passed in the cogify step)
+        if (object.get("upload") and object.get("cogify")) or not object.get("upload"):
             continue
 
         if object.get("user_shared"):
