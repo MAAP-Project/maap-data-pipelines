@@ -69,6 +69,7 @@ def handler(event, context):
                 "remote_fileurl": f"s3://{bucket}/{filename}",
                 "upload": event.get("upload", False),
                 "user_shared": event.get("user_shared", False),
+                "ingest": event.get("ingest", True),
                 "properties": properties,
                 **date_fields,
             }

@@ -112,48 +112,50 @@ class StepFunctionStack(core.Stack):
             stepfunctions.Succeed(self, "Successful Ingest")
         )
 
-        maybe_cogify = (
+        concurrent_cogify = stepfunctions.Map(
+            self,
+            "Run concurrent queueing to cogify queue",
+            max_concurrency=1,
+            items_path=stepfunctions.JsonPath.string_at("$.Payload.objects"),
+            result_path=stepfunctions.JsonPath.DISCARD,
+            output_path="$.Payload",
+        ).iterator(enqueue_cogify_task)
+
+        concurrent_ingest = stepfunctions.Map(
+            self,
+            "Run concurrent queueing to stac ready queue",
+            max_concurrency=1,
+            items_path=stepfunctions.JsonPath.string_at("$.Payload.objects"),
+            result_path=stepfunctions.JsonPath.DISCARD,
+            output_path="$.Payload",
+        ).iterator(enqueue_ready_task)
+
+        maybe_cogify_and_ingest = (
             stepfunctions.Choice(self, "Cogify?")
             .when(
                 stepfunctions.Condition.boolean_equals("$.Payload.cogify", True),
-                stepfunctions.Map(
-                    self,
-                    "Run concurrent queueing to cogify queue",
-                    max_concurrency=1,
-                    items_path=stepfunctions.JsonPath.string_at("$.Payload.objects"),
-                    result_path=stepfunctions.JsonPath.DISCARD,
-                    output_path="$.Payload",
-                )
-                .iterator(enqueue_cogify_task)
-                .next(maybe_next_discovery),
+                concurrent_cogify.next(maybe_next_discovery),
             )
-            .otherwise(
-                stepfunctions.Map(
-                    self,
-                    "Run concurrent queueing to stac ready queue",
-                    max_concurrency=1,
-                    items_path=stepfunctions.JsonPath.string_at("$.Payload.objects"),
-                    result_path=stepfunctions.JsonPath.DISCARD,
-                    output_path="$.Payload",
-                )
-                .iterator(enqueue_ready_task)
-                .next(maybe_next_discovery)
+            .when(
+                stepfunctions.Condition.boolean_equals("$.Payload.ingest", True),
+                concurrent_ingest.next(maybe_next_discovery),
             )
+            .otherwise(maybe_next_discovery)
         )
 
         discovery_workflow = (
             stepfunctions.Choice(self, "Discovery Choice (CMR or S3)")
             .when(
                 stepfunctions.Condition.string_equals("$.discovery", "s3"),
-                s3_discovery_task.next(maybe_cogify),
+                s3_discovery_task.next(maybe_cogify_and_ingest),
             )
             .when(
                 stepfunctions.Condition.string_equals("$.discovery", "cmr"),
-                cmr_discovery_task.next(maybe_cogify),
+                cmr_discovery_task.next(maybe_cogify_and_ingest),
             )
             .when(
                 stepfunctions.Condition.string_equals("$.discovery", "inventory"),
-                inventory_task.next(maybe_cogify),
+                inventory_task.next(maybe_cogify_and_ingest),
             )
             .otherwise(stepfunctions.Fail(self, "Discovery Type not supported"))
         )
@@ -176,10 +178,11 @@ class StepFunctionStack(core.Stack):
         lambda_stack: "LambdaStack",
         queue_stack: "QueueStack",
     ) -> stepfunctions.StateMachine:
-        cogify_task = self._lambda_task(
-            "Cogify",
-            lambda_stack.cogify_lambda,
-        )
+        def _cogify_lambda_task(id):
+            return self._lambda_task(
+                id,
+                lambda_stack.cogify_lambda,
+            )
 
         enqueue_task = self._sqs_task(
             "Send cogified to stac-ready queue",
@@ -187,18 +190,32 @@ class StepFunctionStack(core.Stack):
             input_path="$.Payload",
         )
 
-        cogify_workflow = stepfunctions.Map(
-            self,
-            "Run concurrent cogifications",
-            max_concurrency=1,
-            items_path=stepfunctions.JsonPath.string_at("$"),
-        ).iterator(cogify_task.next(enqueue_task))
+        workflow = (
+            stepfunctions.Choice(self, "Ingest?")
+            .when(
+                stepfunctions.Condition.boolean_equals("$[0].ingest", False),
+                stepfunctions.Map(
+                    self,
+                    "Run concurrent cogifications",
+                    max_concurrency=1,
+                    items_path=stepfunctions.JsonPath.string_at("$"),
+                ).iterator(_cogify_lambda_task("Only Cogify")),
+            )
+            .otherwise(
+                stepfunctions.Map(
+                    self,
+                    "Run concurrent cogifications then ingest",
+                    max_concurrency=1,
+                    items_path=stepfunctions.JsonPath.string_at("$"),
+                ).iterator(_cogify_lambda_task("Cogify").next(enqueue_task))
+            )
+        )
 
         return stepfunctions.StateMachine(
             self,
             f"cogify-sf",
             state_machine_name=f"{self.stack_name}-cogify",
-            definition=cogify_workflow,
+            definition=workflow,
         )
 
     def _publication_workflow(
