@@ -3,7 +3,10 @@
     "type": "Collection",
     "stac_version": "1.0.0",
     "stac_extensions": [
-        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json"
+        "https://stac-extensions.github.io/item-assets/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/projection/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/raster/v1.1.0/schema.json",
+        "https://stac-extensions.github.io/eo/v1.1.0/schema.json"
     ],
     "license": "not-provided",
     "title": "National Centre for Eath Oberservation (NCEO) Africa Aboveground Woody Biomass (AGB) 2017",
@@ -34,5 +37,22 @@
         }
     },
     "links": [],
-    "item_assets": {}
+    "item_assets": {
+        "biomass": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Above Ground Biomass Map",
+            "description": "National Centre for Eath Oberservation (NCEO) Africa Aboveground Woody Biomass (AGB) Map 2017 at 100 meters",
+            "roles": [
+                "data"
+            ]
+        },
+        "standard_deviation": {
+            "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+            "title": "Standard Deviation Map",
+            "description": "National Centre for Eath Oberservation (NCEO) Africa Standard Deviation (SD) Map 2017 at 100 meters",
+            "roles": [
+                "data"
+            ]
+        }
+    }
 }
