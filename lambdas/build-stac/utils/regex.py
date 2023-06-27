@@ -33,9 +33,9 @@ def extract_dates(
     """
     Extracts start & end or single date string from filename (using only the file name if the full path is provided)
     """
-    
+
     filename = filename.split("/")[-1]
-    
+
     DATE_REGEX_STRATEGIES = [
         (r"(?:_|-)(\d{4}-\d{2}-\d{2})", "%Y-%m-%d"),
         (r"(?:_|-)(\d{8})", "%Y%m%d"),
