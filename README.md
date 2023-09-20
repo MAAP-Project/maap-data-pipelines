@@ -1,4 +1,6 @@
-:warning: :warning: :warning: **This repository is deprecated. It is preserved only so that we are able to retroactively run pipelines as of September 14th 2023.** :warning: :warning: :warning:
+# Notice of Repository Status
+
+As of September 14th, 2023, this repository is no longer being actively updated. New datasets and updates will be added to [stactools-pipelines](https://github.com/MAAP-Project/stactools-pipelines). Please visit the stactools-pipelines repository for any future datasets and updates.
 
 # maap-data-pipelines
 
